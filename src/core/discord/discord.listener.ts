@@ -7,6 +7,6 @@ export class DiscordListener {
 
     @Once("clientReady")
     public onReady(@Context() [client]: ContextOf<"clientReady">) {
-        this.logger.log(`Logged is as: ${client.user.tag} on ${client.guilds.cache.size} Servers.`);
+        this.logger.log(`Logged in as: ${client.user.tag} on ${client.guilds.cache.size} Servers.`);
     }
 }
