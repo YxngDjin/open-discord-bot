@@ -1,8 +1,7 @@
-import { Module } from "@nestjs/common";
-import { UtilityCommands } from "./utillity.commands.js";
+import { Module } from '@nestjs/common';
+import { UtilityCommands } from './utillity.commands.js';
 
 @Module({
-    providers: [UtilityCommands],
+  providers: [UtilityCommands],
 })
-
-export class UtilityModule {};
+export class UtilityModule {}

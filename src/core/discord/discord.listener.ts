@@ -1,12 +1,14 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { Context, type ContextOf, Once } from "necord";
+import { Injectable, Logger } from '@nestjs/common';
+import { Context, type ContextOf, Once } from 'necord';
 
 @Injectable()
 export class DiscordListener {
-    private readonly logger = new Logger(DiscordListener.name);
+  private readonly logger = new Logger(DiscordListener.name);
 
-    @Once("clientReady")
-    public onReady(@Context() [client]: ContextOf<"clientReady">) {
-        this.logger.log(`Logged in as: ${client.user.tag} on ${client.guilds.cache.size} Servers.`);
-    }
+  @Once('clientReady')
+  public onReady(@Context() [client]: ContextOf<'clientReady'>) {
+    this.logger.log(
+      `Logged in as: ${client.user.tag} on ${client.guilds.cache.size} Servers.`,
+    );
+  }
 }

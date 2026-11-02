@@ -12,15 +12,14 @@ import { WelcomeModule } from './modules/welcome/welcome.module.js';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      validate: validateEnv
+      validate: validateEnv,
     }),
     DatabaseModule,
     DiscordModule,
     UtilityModule,
     GuildModule,
     ModuleRegistryModule,
-    WelcomeModule
+    WelcomeModule,
   ],
 })
-
 export class AppModule {}
