@@ -18,6 +18,20 @@ model Guild {
   leftAt DateTime? @map("left_at")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  guildModule GuildModule[]
 
   @@map("guilds")
+}
+
+model GuildModule {
+  guildId String @map("guild_id")
+  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  module String
+  enabled Boolean @default(false)
+  settings Json @default("{}")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@id([guildId, module])
+  @@map("guild_modules")
 }
