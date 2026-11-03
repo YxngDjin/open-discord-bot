@@ -3,6 +3,7 @@ import { PrismaService } from '../database/prisma.service.js';
 import { ModuleRegistryService } from './module-registry.service.js';
 import type * as z from 'zod';
 import type { ModuleDefinition } from './module-definition.js';
+import type { Prisma } from '../../generated/prisma/client.js';
 
 @Injectable()
 export class ModuleSettingsService {
@@ -70,5 +71,45 @@ export class ModuleSettingsService {
       `Invalid settings for module "${definition.key}" on Server ${guildId}:\n${result.error.message}`,
     );
     return definition.settingsSchema.parse({});
+  }
+
+  async updateSettings<TSchema extends z.ZodObject>(
+    guildId: string,
+    definition: ModuleDefinition<TSchema>,
+    patch: Partial<z.infer<TSchema>>,
+  ): Promise<z.infer<TSchema>> {
+    const currentSettings = await this.getSettings(guildId, definition);
+    const newSettings = { ...currentSettings, ...patch };
+
+    const result = definition.settingsSchema.safeParse(newSettings);
+
+    const details = result?.error?.issues
+      .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
+      .join('\n');
+
+    if (!result.success) {
+      throw new Error(details);
+    }
+
+    const settingsJson = result.data as Prisma.InputJsonObject;
+
+    await this.prisma.guildModule.upsert({
+      where: {
+        guildId_module: {
+          guildId,
+          module: definition.key,
+        },
+      },
+      create: {
+        guildId,
+        module: definition.key,
+        settings: settingsJson,
+      },
+      update: {
+        settings: settingsJson,
+      },
+    });
+
+    return result.data;
   }
 }

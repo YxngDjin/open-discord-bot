@@ -13,25 +13,60 @@ datasource db {
 }
 
 model Guild {
-  id String @id
-  locale String @default("en")
-  leftAt DateTime? @map("left_at")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  guildModule GuildModule[]
+  id                String             @id
+  locale            String             @default("en")
+  leftAt            DateTime?          @map("left_at")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+  guildModule       GuildModule[]
+  moderationCases   ModerationCase[]
+  moderationCounter ModerationCounter?
 
   @@map("guilds")
 }
 
 model GuildModule {
-  guildId String @map("guild_id")
-  guild Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
-  module String
-  enabled Boolean @default(false)
-  settings Json @default("{}")
+  guildId   String   @map("guild_id")
+  guild     Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  module    String
+  enabled   Boolean  @default(false)
+  settings  Json     @default("{}")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@id([guildId, module])
   @@map("guild_modules")
+}
+
+model ModerationCase {
+  id              String   @id @default(uuid())
+  guildId         String   @map("guild_id")
+  guild           Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  caseNumber      Int      @map("case_number")
+  type            CaseType
+  targetId        String   @map("target_id")
+  moderatorId     String   @map("moderator_id")
+  reason          String?
+  durationSeconds Int?     @map("duration_seconds")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@unique([guildId, caseNumber])
+  @@index([guildId, targetId])
+  @@map("moderation_cases")
+}
+
+model ModerationCounter {
+  guildId        String @id @map("guild_id")
+  guild          Guild  @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  lastCaseNumber Int    @map("last_case_number")
+
+  @@map("moderation_counters")
+}
+
+enum CaseType {
+  WARN
+  TIMEOUT
+  KICK
+  BAN
+  UNBAN
 }

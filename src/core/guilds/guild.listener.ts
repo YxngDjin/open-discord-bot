@@ -10,17 +10,22 @@ export class GuildListener {
 
   @Once('clientReady')
   public async onReady(@Context() [client]: ContextOf<'clientReady'>) {
-    const guildIds = client.guilds.cache.map((guild) => guild.id);
-    const leftCount = await this.guildService.syncGuilds(guildIds);
+    const guilds = client.guilds.cache.map((guild) => {
+      return {
+        id: guild.id,
+        preferredLocale: guild.preferredLocale,
+      };
+    });
+    const leftCount = await this.guildService.syncGuilds(guilds);
 
     this.logger.log(
-      `Synced ${guildIds.length} guild(s), ${leftCount} marked as left.`,
+      `Synced ${guilds.length} guild(s), ${leftCount} marked as left.`,
     );
   }
 
   @On('guildCreate')
   public async onGuildCreate(@Context() [guild]: ContextOf<'guildCreate'>) {
-    await this.guildService.ensureGuild(guild.id);
+    await this.guildService.ensureGuild(guild.id, guild.preferredLocale);
     this.logger.log(`Joined ${guild.name} (${guild.id})`);
   }
 

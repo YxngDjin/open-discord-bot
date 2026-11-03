@@ -14,7 +14,10 @@ import { DiscordListener } from './discord.listener.js';
 
         return {
           token: config.get('DISCORD_TOKEN'),
-          intents: [IntentsBitField.Flags.Guilds],
+          intents: [
+            IntentsBitField.Flags.Guilds,
+            IntentsBitField.Flags.GuildMembers,
+          ],
           development: devGuildId ? [devGuildId] : false,
         };
       },

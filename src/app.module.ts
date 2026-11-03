@@ -7,6 +7,8 @@ import { DatabaseModule } from './core/database/database.module.js';
 import { GuildModule } from './core/guilds/guild.module.js';
 import { ModuleRegistryModule } from './core/module-registry/module-registry.module.js';
 import { WelcomeModule } from './modules/welcome/welcome.module.js';
+import { I18nModule } from './core/i18n/i18n.module.js';
+import { ModerationModule } from './modules/moderation/moderation.module.js';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { WelcomeModule } from './modules/welcome/welcome.module.js';
     GuildModule,
     ModuleRegistryModule,
     WelcomeModule,
+    I18nModule,
+    ModerationModule,
   ],
 })
 export class AppModule {}
