@@ -3,7 +3,7 @@ import type { CaseType } from '../../generated/prisma/enums.js';
 import { PrismaService } from '../../core/database/prisma.service.js';
 import { ModuleSettingsService } from '../../core/module-registry/module-settings.service.js';
 import { moderationModule } from './moderation.definition.js';
-import { type GuildMember } from 'discord.js';
+import type { GuildMember } from 'discord.js';
 
 export type CreateCaseInput = {
   guildId: string;
@@ -15,7 +15,8 @@ export type CreateCaseInput = {
 };
 
 export type ModAction = 'timeout' | 'kick' | 'ban';
-export type TargetError = 'self' | 'owner' | 'hierarchy' | 'botCannot';
+export type TargetError =
+  'self' | 'owner' | 'hierarchy' | 'botCannot' | 'noPermission';
 
 @Injectable()
 export class ModerationService {
@@ -53,11 +54,23 @@ export class ModerationService {
     return this.moduleSettings.isEnabled(guildId, moderationModule.key);
   }
 
+  hasPermission(moderator: GuildMember, action: ModAction): boolean {
+    return {
+      timeout: moderator.permissions.has('ModerateMembers'),
+      kick: moderator.permissions.has('KickMembers'),
+      ban: moderator.permissions.has('BanMembers'),
+    }[action];
+  }
+
   checkTarget(
     moderator: GuildMember,
     target: GuildMember,
     action: ModAction,
   ): TargetError | null {
+    if (!this.hasPermission(moderator, action)) {
+      return 'noPermission';
+    }
+
     if (moderator.id === target.id) {
       return 'self';
     }
