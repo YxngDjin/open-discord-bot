@@ -6,11 +6,7 @@ import { WelcomeListener } from './welcome.listener.js';
 import { WelcomeCommands } from './welcome.commands.js';
 
 @Module({
-  providers: [
-    WelcomeService,
-    WelcomeListener,
-    WelcomeCommands,
-  ],
+  providers: [WelcomeService, WelcomeListener, WelcomeCommands],
 })
 export class WelcomeModule implements OnModuleInit {
   constructor(private readonly moduleRegistry: ModuleRegistryService) {}

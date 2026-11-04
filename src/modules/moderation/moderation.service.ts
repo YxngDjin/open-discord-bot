@@ -4,6 +4,11 @@ import { PrismaService } from '../../core/database/prisma.service.js';
 import { ModuleSettingsService } from '../../core/module-registry/module-settings.service.js';
 import { moderationModule } from './moderation.definition.js';
 import type { GuildMember } from 'discord.js';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import {
+  MODERATION_CASE_CREATED,
+  type ModerationCaseCreatedEvent,
+} from './moderation.events.js';
 
 export type CreateCaseInput = {
   guildId: string;
@@ -23,24 +28,8 @@ export class ModerationService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly moduleSettings: ModuleSettingsService,
+    private readonly events: EventEmitter2,
   ) {}
-
-  async createCase(input: CreateCaseInput) {
-    return this.prisma.$transaction(async (tx) => {
-      const counter = await tx.moderationCounter.upsert({
-        where: { guildId: input.guildId },
-        create: { guildId: input.guildId, lastCaseNumber: 1 },
-        update: { lastCaseNumber: { increment: 1 } },
-      });
-
-      return tx.moderationCase.create({
-        data: {
-          ...input,
-          caseNumber: counter.lastCaseNumber,
-        },
-      });
-    });
-  }
 
   async listCases(guildId: string, targetId: string) {
     return this.prisma.moderationCase.findMany({
@@ -98,5 +87,34 @@ export class ModerationService {
     }
 
     return null;
+  }
+
+  async createCase(input: CreateCaseInput) {
+    const modCase = await this.prisma.$transaction(async (tx) => {
+      const counter = await tx.moderationCounter.upsert({
+        where: { guildId: input.guildId },
+        create: { guildId: input.guildId, lastCaseNumber: 1 },
+        update: { lastCaseNumber: { increment: 1 } },
+      });
+
+      return tx.moderationCase.create({
+        data: {
+          ...input,
+          caseNumber: counter.lastCaseNumber,
+        },
+      });
+    });
+
+    this.events.emit(MODERATION_CASE_CREATED, {
+      guildId: modCase.guildId,
+      caseNumber: modCase.caseNumber,
+      type: modCase.type,
+      targetId: modCase.targetId,
+      moderatorId: modCase.moderatorId,
+      reason: modCase.reason ?? undefined,
+      durationSeconds: modCase.durationSeconds ?? undefined,
+    } satisfies ModerationCaseCreatedEvent);
+
+    return modCase;
   }
 }

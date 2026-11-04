@@ -10,7 +10,7 @@ import {
 import { I18nService } from '../../core/i18n/i18n.service.js';
 import { xpTranslations } from './i18n/index.js';
 import { xpModule, type XpSettings } from './xp.definition.js';
-import { levelFromXp } from './xp.formula.js';
+import { levelFromXp, progressInLevel } from './xp.formula.js';
 import { Interval } from '@nestjs/schedule';
 
 @Injectable()
@@ -173,5 +173,33 @@ export class XpService {
         `Could not assign level roles in guild ${member.guild.id}: ${String(error)}`,
       );
     }
+  }
+
+  async getRank(guildId: string, userId: string) {
+    const entry = await this.prisma.memberXp.findUnique({
+      where: { guildId_userId: { guildId, userId } },
+    });
+
+    if (!entry) return null;
+
+    const higher = await this.prisma.memberXp.count({
+      where: { guildId, xp: { gt: entry.xp } },
+    });
+
+    return {
+      entry,
+      rank: higher + 1,
+      progress: progressInLevel(entry.xp),
+    };
+  }
+
+  async getLeaderboard(guildId: string) {
+    const entry = await this.prisma.memberXp.findMany({
+      where: { guildId },
+      orderBy: { xp: 'desc' },
+      take: 10,
+    });
+
+    return entry;
   }
 }

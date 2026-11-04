@@ -11,6 +11,8 @@ import { I18nModule } from './core/i18n/i18n.module.js';
 import { ModerationModule } from './modules/moderation/moderation.module.js';
 import { XpModule } from './modules/xp/xp.module.js';
 import { ScheduleModule } from '@nestjs/schedule';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ModlogModule } from './modules/modlog/modlog.module.js';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       validate: validateEnv,
     }),
     ScheduleModule.forRoot(),
+    EventEmitterModule.forRoot(),
     DatabaseModule,
     DiscordModule,
     UtilityModule,
@@ -28,6 +31,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     I18nModule,
     ModerationModule,
     XpModule,
+    ModlogModule,
   ],
 })
 export class AppModule {}
