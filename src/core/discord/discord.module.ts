@@ -17,6 +17,8 @@ import { DiscordListener } from './discord.listener.js';
           intents: [
             IntentsBitField.Flags.Guilds,
             IntentsBitField.Flags.GuildMembers,
+            IntentsBitField.Flags.GuildMessages,
+            IntentsBitField.Flags.GuildVoiceStates,
           ],
           development: devGuildId ? [devGuildId] : false,
         };

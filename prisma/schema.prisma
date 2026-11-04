@@ -21,6 +21,7 @@ model Guild {
   guildModule       GuildModule[]
   moderationCases   ModerationCase[]
   moderationCounter ModerationCounter?
+  memberXp          MemberXp[]
 
   @@map("guilds")
 }
@@ -69,4 +70,19 @@ enum CaseType {
   KICK
   BAN
   UNBAN
+}
+
+model MemberXp {
+  guildId      String   @map("guild_id")
+  guild        Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  userId       String   @map("user_id")
+  xp           Int      @default(0)
+  messageCount Int      @default(0) @map("message_count")
+  voiceMinutes Int      @default(0) @map("voice_minutes")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@id([guildId, userId])
+  @@index([guildId, xp(sort: Desc)])
+  @@map("member_xp")
 }

@@ -6,6 +6,6 @@ import { ModuleSettingsService } from './module-settings.service.js';
 @Global()
 @Module({
   providers: [ModuleRegistryService, ModuleSettingsService, ModuleCommands],
-  exports: [ModuleRegistryService],
+  exports: [ModuleRegistryService, ModuleSettingsService],
 })
 export class ModuleRegistryModule {}

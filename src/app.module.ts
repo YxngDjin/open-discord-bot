@@ -9,6 +9,8 @@ import { ModuleRegistryModule } from './core/module-registry/module-registry.mod
 import { WelcomeModule } from './modules/welcome/welcome.module.js';
 import { I18nModule } from './core/i18n/i18n.module.js';
 import { ModerationModule } from './modules/moderation/moderation.module.js';
+import { XpModule } from './modules/xp/xp.module.js';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -16,6 +18,7 @@ import { ModerationModule } from './modules/moderation/moderation.module.js';
       isGlobal: true,
       validate: validateEnv,
     }),
+    ScheduleModule.forRoot(),
     DatabaseModule,
     DiscordModule,
     UtilityModule,
@@ -24,6 +27,7 @@ import { ModerationModule } from './modules/moderation/moderation.module.js';
     WelcomeModule,
     I18nModule,
     ModerationModule,
+    XpModule,
   ],
 })
 export class AppModule {}

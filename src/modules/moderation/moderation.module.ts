@@ -3,10 +3,9 @@ import { ModuleRegistryService } from '../../core/module-registry/module-registr
 import { moderationModule } from './moderation.definition.js';
 import { ModerationService } from './moderation.service.js';
 import { ModerationCommands } from './moderation.commands.js';
-import { ModuleSettingsService } from '../../core/module-registry/module-settings.service.js';
 
 @Module({
-  providers: [ModerationService, ModerationCommands, ModuleSettingsService],
+  providers: [ModerationService, ModerationCommands],
 })
 export class ModerationModule implements OnModuleInit {
   constructor(private readonly moduleRegistry: ModuleRegistryService) {}
