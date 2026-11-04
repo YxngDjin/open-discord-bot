@@ -1,132 +1,156 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# open-discord-bot
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A modular, multilingual Discord bot you can host yourself.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+> **Status:** early development. Things will change, and there is no stable release yet.
 
-## Description
+## Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Everything is split into **modules** that server admins can turn on and off per server with `/module`.
 
-## Project setup
+| Module | What it does |
+|---|---|
+| **Welcome** | Welcome and goodbye messages with placeholders, automatic roles for new members (with optional delay) |
+| **Moderation** | Warn, timeout, kick, ban and unban with numbered cases per server and a case history per user |
+| **Utility** | `/ping` |
 
-```bash
-$ npm install
-```
+Further modules (mod log, self roles, levels, tickets, …) are planned.
 
-## Compile and run the project
+**Languages:** English and German. Command descriptions follow each user's Discord language. Public bot messages use the server language, which admins can change with `/language`.
 
-```bash
-# development
-$ npm run start
+## Commands
 
-# watch mode
-$ npm run start:dev
+| Command | Who | Description |
+|---|---|---|
+| `/ping` | everyone | Shows the bot's latency |
+| `/module list \| enable \| disable` | Manage Server | Show modules and turn them on or off |
+| `/language [language]` | Manage Server | Show or change the server language |
+| `/welcome show \| channel \| message \| goodbye` | Manage Server | Configure welcome and goodbye messages |
+| `/welcome autorole-add \| autorole-remove \| autorole-delay` | Manage Server | Configure automatic roles |
+| `/mod warn \| timeout \| kick \| ban \| unban` | Moderate Members* | Moderation actions, each creates a numbered case |
+| `/mod cases` | Moderate Members | Show the last cases of a user |
 
-# production mode
-$ npm run start:prod
-```
+\* Kick and ban additionally require the *Kick Members* or *Ban Members* permission. The bot checks this itself, and it also makes sure moderators can only act on members below their highest role.
 
-## Run tests
+**Placeholders** for welcome and goodbye messages: `{user}` (mention), `{username}`, `{server}`, `{memberCount}`.
 
-```bash
-# unit tests
-$ npm run test
+## Self-hosting
 
-# e2e tests
-$ npm run test:e2e
+### Requirements
 
-# test coverage
-$ npm run test:cov
-```
+- [Node.js](https://nodejs.org) 22 or newer
+- [Docker](https://www.docker.com) with Docker Compose (for the PostgreSQL database)
+- A Discord application with a bot
 
-## Deployment
+### 1. Create the Discord bot
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+1. Open the [Discord Developer Portal](https://discord.com/developers/applications) and create a **New Application**.
+2. **Bot** tab:
+   - Click **Reset Token** and copy the token. You need it in step 3. Never share it.
+   - Under **Privileged Gateway Intents**, enable **Server Members Intent**. Without it, the welcome module does not work and the bot will not start.
+3. **OAuth2 → URL Generator**:
+   - Scopes: `bot` and `applications.commands`
+   - Bot permissions: *View Channels*, *Send Messages*, *Manage Roles*, *Moderate Members*, *Kick Members*, *Ban Members*
+   - Open the generated URL and invite the bot to your server.
+4. In your server settings, drag the bot's role **above** all roles it should assign or moderate. Discord does not allow bots to manage roles above their own.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 2. Get the code
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+git clone https://github.com/YxngDjin/open-discord-bot.git
+cd open-discord-bot
+npm ci
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Observability
-
-In production applications, observability is essential for understanding how your system behaves, detecting issues early, and maintaining reliable performance.
-
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep visibility into your system with minimal setup:
-
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies so your team can react quickly.
-
-To add it to this project, run this and approve the code it prints at [observe.nestjs.com/link](https://observe.nestjs.com/link) - signing up for free if you have no account:
+### 3. Configure
 
 ```bash
-$ npx @nestjs/observe link
+cp .env.example .env
 ```
 
-It installs `@nestjs/observe`, wires it into `AppModule` and `main.ts`, and writes the app key and secret into `.env`, which every `nest start` script (`start`, `start:dev`, `start:debug`) then loads. In production, set `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the environment instead.
+Open `.env` and fill in the values. Every variable is explained in the file.
 
-Or do it by hand:
+| Variable | Required | Description |
+|---|---|---|
+| `DISCORD_TOKEN` | yes | Your bot token |
+| `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | yes | Credentials for the database container. Choose your own password. |
+| `DATABASE_URL` | yes | Connection URL for the bot, built from the three values above |
+| `LOG_LEVEL` | no | `fatal`, `error`, `warn`, `log` (default), `debug` or `verbose` |
+| `DEV_GUILD_ID` | no | For development only: registers commands instantly on this one server |
+
+The bot checks the configuration on startup and tells you exactly what is missing.
+
+### 4. Start the database
 
 ```bash
-$ npm install @nestjs/observe
+docker compose up -d
 ```
 
-Then follow the [setup guide](https://docs.nestjs.com/observability/sdk) - it takes a single import and an app key.
+Wait until `docker compose ps` shows the database as **healthy**.
 
-The free plan needs no payment details and covers 300,000 events a month. You can also browse the [live demo](https://www.observe-demo.nestjs.com/dashboard) first - the whole dashboard over a busy service's data, with nothing to install.
+### 5. Prepare the database
 
-## Resources
+```bash
+npx prisma generate
+npx prisma migrate deploy
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+### 6. Start the bot
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observe](https://observe.nestjs.com). Distributed tracing, metrics, and logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+npm run build
+npm run start:prod
+```
 
-## Support
+The bot logs `Logged in as …` when it is ready. Slash commands can take a moment to appear the first time.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Then, on your server:
 
-## Stay in touch
+1. `/module enable module:welcome` and/or `/module enable module:moderation`
+2. Configure the modules, e.g. `/welcome channel channel:#welcome`
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Development
+
+```bash
+npm run start:dev    # start with auto-reload
+npm run lint         # lint
+npm run format       # format with Prettier
+npm test             # run tests
+```
+
+Set `DEV_GUILD_ID` in your `.env` so command changes show up instantly on your test server.
+
+After changing `prisma/schema.prisma`:
+
+```bash
+npx prisma migrate dev --name <describe-your-change>
+npx prisma generate
+```
+
+### Project structure
+
+```
+src/
+├── core/        Foundation: config, database, Discord connection, guild sync,
+│                languages, module registry. Does not know any feature module.
+└── modules/     Feature modules. Each module brings its own commands,
+                 listeners, settings schema and translations.
+prisma/          Database schema and migrations
+```
+
+**Ground rules:**
+
+- `core/` never imports from `modules/`. Modules register themselves with the core.
+- Modules do not import each other.
+- Everything a module needs lives in its own folder.
+- Commands and listeners stay thin. Logic belongs in services.
+- Every field in a module's settings schema has a default or is optional, and only uses JSON-compatible types.
+- Every user-facing text is translated. New texts go into the module's `i18n/en.ts` and `i18n/de.ts`.
+
+## Contributing
+
+Bug reports and feature ideas are welcome. Please use the issue templates.
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+[MIT](LICENSE)
