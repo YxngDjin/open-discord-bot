@@ -12,9 +12,11 @@ Everything is split into **modules** that server admins can turn on and off per 
 |---|---|
 | **Welcome** | Welcome and goodbye messages with placeholders, automatic roles for new members (with optional delay) |
 | **Moderation** | Warn, timeout, kick, ban and unban with numbered cases per server and a case history per user |
+| **Mod log** | Posts moderation cases, joins and leaves to a log channel |
+| **XP & levels** | XP for messages and voice time, level-up messages, level roles, rank card and leaderboard |
 | **Utility** | `/ping` |
 
-Further modules (mod log, self roles, levels, tickets, …) are planned.
+Further modules (self roles, temporary voice channels, tickets, …) are planned.
 
 **Languages:** English and German. Command descriptions follow each user's Discord language. Public bot messages use the server language, which admins can change with `/language`.
 
@@ -29,10 +31,17 @@ Further modules (mod log, self roles, levels, tickets, …) are planned.
 | `/welcome autorole-add \| autorole-remove \| autorole-delay` | Manage Server | Configure automatic roles |
 | `/mod warn \| timeout \| kick \| ban \| unban` | Moderate Members* | Moderation actions, each creates a numbered case |
 | `/mod cases` | Moderate Members | Show the last cases of a user |
+| `/modlog show \| channel \| toggle` | Manage Server | Configure the log channel and what gets logged |
+| `/rank [user]` | everyone | Level, progress, rank and stats of a member |
+| `/leaderboard` | everyone | Top 10 members by XP |
+| `/xp show \| message-xp \| cooldown \| voice-xp` | Manage Server | Configure how much XP members earn |
+| `/xp ignore-channel \| levelup \| role-add \| role-remove` | Manage Server | Ignored channels, level-up messages and level roles |
 
 \* Kick and ban additionally require the *Kick Members* or *Ban Members* permission. The bot checks this itself, and it also makes sure moderators can only act on members below their highest role.
 
 **Placeholders** for welcome and goodbye messages: `{user}` (mention), `{username}`, `{server}`, `{memberCount}`.
+
+**How XP works:** members earn XP for messages (with a cooldown against spam) and for every minute in a voice channel. Voice XP is only given when at least two people are in the channel, not in the AFK channel and not while deafened. Admins can exclude channels with `/xp ignore-channel`.
 
 ## Self-hosting
 
@@ -141,7 +150,7 @@ prisma/          Database schema and migrations
 **Ground rules:**
 
 - `core/` never imports from `modules/`. Modules register themselves with the core.
-- Modules do not import each other.
+- Modules do not import each other. To react to something another module does, use events (`@nestjs/event-emitter`). A module may publish a `*.events.ts` file with event names and payload types; other modules may only use `import type` from it.
 - Everything a module needs lives in its own folder.
 - Commands and listeners stay thin. Logic belongs in services.
 - Every field in a module's settings schema has a default or is optional, and only uses JSON-compatible types.

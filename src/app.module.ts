@@ -13,6 +13,7 @@ import { XpModule } from './modules/xp/xp.module.js';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ModlogModule } from './modules/modlog/modlog.module.js';
+import { SelfRolesModule } from './modules/self-roles/self-roles.module.js';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ModlogModule } from './modules/modlog/modlog.module.js';
     ModerationModule,
     XpModule,
     ModlogModule,
+    SelfRolesModule,
   ],
 })
 export class AppModule {}
