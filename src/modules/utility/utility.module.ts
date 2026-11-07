@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UtilityCommands } from './utillity.commands.js';
+import { UtilityCommands } from './utility.commands.js';
 
 @Module({
   providers: [UtilityCommands],

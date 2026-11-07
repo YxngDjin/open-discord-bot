@@ -59,7 +59,7 @@ export class ModuleCommands {
     const lines = await Promise.all(
       this.registry.getAll().map(async (definition) => {
         const isOn = await this.settings.isEnabled(guildId, definition.key);
-        return `${definition.key} ${isOn ? '✅' : '❌'}`;
+        return `${isOn ? '✅' : '❌'} ${definition.name[locale]} (\`${definition.key}\`)`;
       }),
     );
 

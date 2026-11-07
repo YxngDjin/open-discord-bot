@@ -12,5 +12,7 @@ export type ModlogSettings = z.infer<typeof modlogSettingsSchema>;
 
 export const modlogModule = {
   key: 'modlog',
+  name: { en: 'Mod log', de: 'Mod-Log' },
+  commands: ['modlog'],
   settingsSchema: modlogSettingsSchema,
 } satisfies ModuleDefinition;

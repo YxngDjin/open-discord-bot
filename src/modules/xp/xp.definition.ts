@@ -17,5 +17,7 @@ export type XpSettings = z.infer<typeof xpSettingsSchema>;
 
 export const xpModule = {
   key: 'xp',
+  name: { en: 'XP & levels', de: 'XP & Level' },
+  commands: ['rank', 'leaderboard', 'xp'],
   settingsSchema: xpSettingsSchema,
 } satisfies ModuleDefinition;

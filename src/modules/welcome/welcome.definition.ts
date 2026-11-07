@@ -14,5 +14,7 @@ export type WelcomeSettings = z.infer<typeof welcomeSettingsSchema>;
 
 export const welcomeModule = {
   key: 'welcome',
+  name: { en: 'Welcome', de: 'Willkommen' },
+  commands: ['welcome'],
   settingsSchema: welcomeSettingsSchema,
 } satisfies ModuleDefinition;

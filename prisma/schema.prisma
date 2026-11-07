@@ -23,6 +23,7 @@ model Guild {
   moderationCounter ModerationCounter?
   memberXp          MemberXp[]
   selfRolePanels    SelfRolePanel[]
+  tempVoiceChannel  TempVoiceChannel[]
 
   @@map("guilds")
 }
@@ -122,4 +123,16 @@ model SelfRoleOption {
 enum SelfRoleMode {
   BUTTONS
   SELECT
+}
+
+model TempVoiceChannel {
+  channelId  String    @id @map("channel_id")
+  guildId    String    @map("guild_id")
+  guild      Guild     @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  ownerId    String    @map("owner_id")
+  emptySince DateTime? @map("empty_since")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@index([guildId])
+  @@map("temp_voice_channels")
 }

@@ -9,5 +9,7 @@ export type ModerationSettings = z.infer<typeof moderationSettingsSchema>;
 
 export const moderationModule = {
   key: 'moderation',
+  name: { en: 'Moderation', de: 'Moderation' },
+  commands: ['mod'],
   settingsSchema: moderationSettingsSchema,
 } satisfies ModuleDefinition;

@@ -15,9 +15,10 @@ Everything is split into **modules** that server admins can turn on and off per 
 | **Mod log** | Posts moderation cases, joins and leaves to a log channel |
 | **XP & levels** | XP for messages and voice time, level-up messages, level roles, rank card and leaderboard |
 | **Self roles** | Panels with buttons or a select menu where members pick their own roles |
-| **Utility** | `/ping` |
+| **Temp voice** | "Join to create" voice channels that members can rename, limit and lock, deleted automatically when empty |
+| **Utility** | `/help`, `/serverinfo`, `/userinfo`, `/clear` and `/ping` (always on) |
 
-Further modules (temporary voice channels, tickets, …) are planned.
+Further modules (tickets, giveaways, …) are planned.
 
 **Languages:** English and German. Command descriptions follow each user's Discord language. Public bot messages use the server language, which admins can change with `/language`.
 
@@ -25,6 +26,10 @@ Further modules (temporary voice channels, tickets, …) are planned.
 
 | Command | Who | Description |
 |---|---|---|
+| `/help` | everyone | All commands you can use on this server, grouped by module and clickable |
+| `/serverinfo` | everyone | Owner, members, channels, roles, boosts and age of the server |
+| `/userinfo [user]` | everyone | Name, roles, account age and join date of a member |
+| `/clear` | Manage Messages | Delete up to 100 recent messages (Discord skips messages older than 14 days) |
 | `/ping` | everyone | Shows the bot's latency |
 | `/module list \| enable \| disable` | Manage Server | Show modules and turn them on or off |
 | `/language [language]` | Manage Server | Show or change the server language |
@@ -39,12 +44,17 @@ Further modules (temporary voice channels, tickets, …) are planned.
 | `/xp ignore-channel \| levelup \| role-add \| role-remove` | Manage Server | Ignored channels, level-up messages and level roles |
 | `/self-role create \| list \| delete` | Manage Server | Create, list and delete self role panels |
 | `/self-role add-role \| remove-role \| publish` | Manage Server | Choose the roles of a panel and post it |
+| `/tempvoice show \| channel \| category` | Manage Server | Set the join-to-create channel and where new channels go |
+| `/tempvoice name \| limit \| delete-after` | Manage Server | Name, user limit and delete delay of new channels |
+| `/voice name \| limit \| lock \| unlock` | channel owner | Change your own temporary voice channel |
 
 \* Kick and ban additionally require the *Kick Members* or *Ban Members* permission. The bot checks this itself, and it also makes sure moderators can only act on members below their highest role.
 
 **Placeholders** for welcome and goodbye messages: `{user}` (mention), `{username}`, `{server}`, `{memberCount}`.
 
 **How self roles work:** create a panel with `/self-role create`, add up to 25 roles with `/self-role add-role` and post it with `/self-role publish`. After that, the posted message updates itself whenever you add or remove a role. Members click a button to get or lose a role, or pick their roles in a select menu. For safety, roles with administrator permissions can never be self roles.
+
+**How temporary voice channels work:** set a voice channel with `/tempvoice channel`. Whoever joins it gets their own voice channel and is moved there. The owner can change it with `/voice`. When a channel is empty for the time set with `/tempvoice delete-after` (default 3 minutes), the bot deletes it, also if it was offline in the meantime. Placeholder for the name: `{user}`.
 
 **How XP works:** members earn XP for messages (with a cooldown against spam) and for every minute in a voice channel. Voice XP is only given when at least two people are in the channel, not in the AFK channel and not while deafened. Admins can exclude channels with `/xp ignore-channel`.
 
@@ -64,7 +74,7 @@ Further modules (temporary voice channels, tickets, …) are planned.
    - Under **Privileged Gateway Intents**, enable **Server Members Intent**. Without it, the welcome module does not work and the bot will not start.
 3. **OAuth2 → URL Generator**:
    - Scopes: `bot` and `applications.commands`
-   - Bot permissions: *View Channels*, *Send Messages*, *Embed Links*, *Manage Roles*, *Moderate Members*, *Kick Members*, *Ban Members*
+   - Bot permissions: *View Channels*, *Send Messages*, *Embed Links*, *Read Message History*, *Manage Messages*, *Manage Roles*, *Manage Channels*, *Move Members*, *Moderate Members*, *Kick Members*, *Ban Members*
    - Open the generated URL and invite the bot to your server.
 4. In your server settings, drag the bot's role **above** all roles it should assign or moderate. Discord does not allow bots to manage roles above their own.
 
@@ -158,6 +168,7 @@ prisma/          Database schema and migrations
 - Modules do not import each other. To react to something another module does, use events (`@nestjs/event-emitter`). A module may publish a `*.events.ts` file with event names and payload types; other modules may only use `import type` from it.
 - Everything a module needs lives in its own folder.
 - Commands and listeners stay thin. Logic belongs in services.
+- A module's definition (`*.definition.ts`) holds its `key`, its display `name` in every language, its settings schema and the names of its top-level `commands`. `/help` uses these to hide the commands of disabled modules.
 - Every field in a module's settings schema has a default or is optional, and only uses JSON-compatible types.
 - Every user-facing text is translated. New texts go into the module's `i18n/en.ts` and `i18n/de.ts`.
 

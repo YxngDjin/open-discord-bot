@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { validateEnv } from './core/config/env.js';
 import { DiscordModule } from './core/discord/discord.module.js';
-import { UtilityModule } from './modules/utility/utillity.module.js';
+import { UtilityModule } from './modules/utility/utility.module.js';
 import { DatabaseModule } from './core/database/database.module.js';
 import { GuildModule } from './core/guilds/guild.module.js';
 import { ModuleRegistryModule } from './core/module-registry/module-registry.module.js';
@@ -14,6 +14,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ModlogModule } from './modules/modlog/modlog.module.js';
 import { SelfRolesModule } from './modules/self-roles/self-roles.module.js';
+import { TempVoiceModule } from './modules/temp-voice/temp-voice.module.js';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { SelfRolesModule } from './modules/self-roles/self-roles.module.js';
     XpModule,
     ModlogModule,
     SelfRolesModule,
+    TempVoiceModule,
   ],
 })
 export class AppModule {}
