@@ -1,5 +1,8 @@
 # open-discord-bot
 
+[![CI](https://github.com/YxngDjin/open-discord-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/YxngDjin/open-discord-bot/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A modular, multilingual Discord bot you can host yourself.
 
 > **Status:** early development. Things will change, and there is no stable release yet.
