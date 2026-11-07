@@ -11,11 +11,11 @@ import {
 } from 'necord';
 import { resolveLocale } from '../../core/i18n/locales.js';
 import { selfRolesTranslations } from './i18n/index.js';
-import { SelfRolesService } from './self-role.service.js';
+import { SelfRolesService } from './self-roles.service.js';
 
 @Injectable()
-export class SelfRolesComponent {
-  constructor(private readonly selfRoleService: SelfRolesService) {}
+export class SelfRolesComponents {
+  constructor(private readonly selfRolesService: SelfRolesService) {}
 
   @Button('self-roles/:panelId/:roleId')
   async onButton(
@@ -28,7 +28,7 @@ export class SelfRolesComponent {
     const member = interaction.member;
     const id = Number(panelId);
 
-    const result = await this.selfRoleService.toggleRole(member, id, roleId);
+    const result = await this.selfRolesService.toggleRole(member, id, roleId);
 
     // Answers go only to the clicking member, so use their Discord language.
     const t = selfRolesTranslations[resolveLocale(interaction.locale)].clicks;
@@ -47,7 +47,7 @@ export class SelfRolesComponent {
   ) {
     if (!interaction.inCachedGuild()) return;
 
-    const result = await this.selfRoleService.syncRoles(
+    const result = await this.selfRolesService.syncRoles(
       interaction.member,
       Number(panelId),
       selected,

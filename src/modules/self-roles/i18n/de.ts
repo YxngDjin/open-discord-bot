@@ -19,12 +19,12 @@ export const de = {
     panelFull: (params: { panel: number; max: number }) =>
       `❌ Panel #${params.panel} hat bereits die maximale Anzahl von ${params.max} Rollen.`,
     roleAdded: (params: { role: string; panel: number }) =>
-      `✅ ${params.role} zu Panel #${params.panel} hinzugefügt. Mit \`/self-role publish\` aktualisierst du die gepostete Nachricht.`,
+      `✅ ${params.role} zu Panel #${params.panel} hinzugefügt.`,
 
     roleNotInPanel: (params: { role: string; panel: number }) =>
       `❌ ${params.role} ist nicht in Panel #${params.panel}, oder das Panel existiert nicht.`,
     roleRemoved: (params: { role: string; panel: number }) =>
-      `✅ ${params.role} aus Panel #${params.panel} entfernt. Mit \`/self-role publish\` aktualisierst du die gepostete Nachricht.`,
+      `✅ ${params.role} aus Panel #${params.panel} entfernt.`,
 
     channelMissing: (params: { panel: number }) =>
       `❌ Der Channel von Panel #${params.panel} existiert nicht mehr.`,
@@ -32,6 +32,11 @@ export const de = {
       `❌ Ich konnte Panel #${params.panel} nicht posten. Prüfe, ob ich in dem Channel Nachrichten und Embeds senden darf und ob alle Emojis gültig sind.`,
     published: (params: { panel: number }) =>
       `✅ Panel #${params.panel} ist gepostet und aktuell.`,
+
+    // Second line after add-role / remove-role
+    refreshed: '🔄 Das gepostete Panel wurde aktualisiert.',
+    publishHint:
+      'Das Panel ist noch nicht gepostet. Poste es mit `/self-role publish`, wenn du fertig bist.',
 
     deleted: (params: { panel: number }) =>
       `✅ Panel #${params.panel} gelöscht.`,

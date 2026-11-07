@@ -14,9 +14,10 @@ Everything is split into **modules** that server admins can turn on and off per 
 | **Moderation** | Warn, timeout, kick, ban and unban with numbered cases per server and a case history per user |
 | **Mod log** | Posts moderation cases, joins and leaves to a log channel |
 | **XP & levels** | XP for messages and voice time, level-up messages, level roles, rank card and leaderboard |
+| **Self roles** | Panels with buttons or a select menu where members pick their own roles |
 | **Utility** | `/ping` |
 
-Further modules (self roles, temporary voice channels, tickets, …) are planned.
+Further modules (temporary voice channels, tickets, …) are planned.
 
 **Languages:** English and German. Command descriptions follow each user's Discord language. Public bot messages use the server language, which admins can change with `/language`.
 
@@ -36,10 +37,14 @@ Further modules (self roles, temporary voice channels, tickets, …) are planned
 | `/leaderboard` | everyone | Top 10 members by XP |
 | `/xp show \| message-xp \| cooldown \| voice-xp` | Manage Server | Configure how much XP members earn |
 | `/xp ignore-channel \| levelup \| role-add \| role-remove` | Manage Server | Ignored channels, level-up messages and level roles |
+| `/self-role create \| list \| delete` | Manage Server | Create, list and delete self role panels |
+| `/self-role add-role \| remove-role \| publish` | Manage Server | Choose the roles of a panel and post it |
 
 \* Kick and ban additionally require the *Kick Members* or *Ban Members* permission. The bot checks this itself, and it also makes sure moderators can only act on members below their highest role.
 
 **Placeholders** for welcome and goodbye messages: `{user}` (mention), `{username}`, `{server}`, `{memberCount}`.
+
+**How self roles work:** create a panel with `/self-role create`, add up to 25 roles with `/self-role add-role` and post it with `/self-role publish`. After that, the posted message updates itself whenever you add or remove a role. Members click a button to get or lose a role, or pick their roles in a select menu. For safety, roles with administrator permissions can never be self roles.
 
 **How XP works:** members earn XP for messages (with a cooldown against spam) and for every minute in a voice channel. Voice XP is only given when at least two people are in the channel, not in the AFK channel and not while deafened. Admins can exclude channels with `/xp ignore-channel`.
 
@@ -59,7 +64,7 @@ Further modules (self roles, temporary voice channels, tickets, …) are planned
    - Under **Privileged Gateway Intents**, enable **Server Members Intent**. Without it, the welcome module does not work and the bot will not start.
 3. **OAuth2 → URL Generator**:
    - Scopes: `bot` and `applications.commands`
-   - Bot permissions: *View Channels*, *Send Messages*, *Manage Roles*, *Moderate Members*, *Kick Members*, *Ban Members*
+   - Bot permissions: *View Channels*, *Send Messages*, *Embed Links*, *Manage Roles*, *Moderate Members*, *Kick Members*, *Ban Members*
    - Open the generated URL and invite the bot to your server.
 4. In your server settings, drag the bot's role **above** all roles it should assign or moderate. Discord does not allow bots to manage roles above their own.
 

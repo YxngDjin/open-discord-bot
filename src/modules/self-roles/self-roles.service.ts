@@ -25,6 +25,9 @@ export type ToggleRoleResult =
 
 export type SyncRolesResult = 'disabled' | 'not_found' | 'failed' | 'updated';
 
+export type PublishPanelResult =
+  'ok' | 'not_found' | 'channel_missing' | 'no_permission';
+
 @Injectable()
 export class SelfRolesService {
   private readonly logger = new Logger(SelfRolesService.name);
@@ -162,7 +165,7 @@ export class SelfRolesService {
   async publishPanel(
     guildId: string,
     panelId: number,
-  ): Promise<'ok' | 'not_found' | 'channel_missing' | 'no_permission'> {
+  ): Promise<PublishPanelResult> {
     const panel = await this.getPanel(guildId, panelId);
     if (!panel) return 'not_found';
 
@@ -191,6 +194,22 @@ export class SelfRolesService {
       this.logger.error(error);
       return 'no_permission';
     }
+  }
+
+  /**
+   * Updates the posted message after the roles of a panel changed.
+   * Panels that were never posted stay unposted, so admins can finish setting
+   * them up before members see them.
+   */
+  async refreshPanel(
+    guildId: string,
+    panelId: number,
+  ): Promise<PublishPanelResult | 'not_published'> {
+    const panel = await this.getPanel(guildId, panelId);
+    if (!panel) return 'not_found';
+    if (!panel.messageId) return 'not_published';
+
+    return this.publishPanel(guildId, panelId);
   }
 
   async toggleRole(

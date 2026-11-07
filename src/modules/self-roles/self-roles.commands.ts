@@ -23,14 +23,14 @@ import {
 import { resolveLocale } from '../../core/i18n/locales.js';
 import type { SelfRoleMode } from '../../generated/prisma/enums.js';
 import { selfRolesTranslations } from './i18n/index.js';
-import { MAX_OPTIONS, SelfRolesService } from './self-role.service.js';
+import { MAX_OPTIONS, SelfRolesService } from './self-roles.service.js';
 
 type Interaction = SlashCommandContext[0];
 
 /** Embed descriptions may be at most 4096 characters long. */
 const EMBED_DESCRIPTION_LIMIT = 4096;
 
-export const SelfRoleCommandsDecorator = createCommandGroupDecorator({
+export const SelfRolesCommandsDecorator = createCommandGroupDecorator({
   name: 'self-role',
   description: 'Manage self role panels',
   descriptionLocalizations: { de: 'Selbstrollen-Panels verwalten' },
@@ -152,9 +152,9 @@ export class RemoveRoleDto {
 }
 
 @Injectable()
-@SelfRoleCommandsDecorator()
-export class SelfRoleCommands {
-  constructor(private readonly selfRoleService: SelfRolesService) {}
+@SelfRolesCommandsDecorator()
+export class SelfRolesCommands {
+  constructor(private readonly selfRolesService: SelfRolesService) {}
 
   private translate(interaction: Interaction) {
     return selfRolesTranslations[resolveLocale(interaction.locale)].admin;
@@ -169,6 +169,28 @@ export class SelfRoleCommands {
     });
   }
 
+  /**
+   * Updates an already posted panel after its roles changed and returns a
+   * second line for the answer, so admins don't have to run publish again.
+   */
+  private async refreshNote(interaction: Interaction, panel: number) {
+    const t = this.translate(interaction);
+    const result = await this.selfRolesService.refreshPanel(
+      interaction.guildId!,
+      panel,
+    );
+
+    const notes: Record<typeof result, string> = {
+      ok: t.refreshed,
+      not_published: t.publishHint,
+      not_found: t.panelNotFound({ panel }),
+      channel_missing: t.channelMissing({ panel }),
+      no_permission: t.publishFailed({ panel }),
+    };
+
+    return notes[result];
+  }
+
   @Subcommand({
     name: 'create',
     description: 'Create a new self role panel',
@@ -179,7 +201,7 @@ export class SelfRoleCommands {
     @Options() { channel, title, description, mode }: CreateDto,
   ) {
     const t = this.translate(interaction);
-    const panel = await this.selfRoleService.createPanel(
+    const panel = await this.selfRolesService.createPanel(
       interaction.guildId!,
       channel.id,
       title,
@@ -218,7 +240,7 @@ export class SelfRoleCommands {
       return this.reply(interaction, t.roleAdmin({ role: mention }));
     }
 
-    const result = await this.selfRoleService.addOption(
+    const result = await this.selfRolesService.addOption(
       guildId,
       panel,
       role.id,
@@ -226,14 +248,21 @@ export class SelfRoleCommands {
       emoji,
     );
 
-    const messages: Record<typeof result, string> = {
-      ok: t.roleAdded({ role: mention, panel }),
+    if (result === 'ok') {
+      const note = await this.refreshNote(interaction, panel);
+      return this.reply(
+        interaction,
+        `${t.roleAdded({ role: mention, panel })}\n${note}`,
+      );
+    }
+
+    const errors: Record<Exclude<typeof result, 'ok'>, string> = {
       exists: t.roleExists({ role: mention, panel }),
       full: t.panelFull({ panel, max: MAX_OPTIONS }),
       not_found: t.panelNotFound({ panel }),
     };
 
-    return this.reply(interaction, messages[result]);
+    return this.reply(interaction, errors[result]);
   }
 
   @Subcommand({
@@ -247,17 +276,23 @@ export class SelfRoleCommands {
   ) {
     const t = this.translate(interaction);
     const mention = `<@&${role.id}>`;
-    const removed = await this.selfRoleService.removeOption(
+    const removed = await this.selfRolesService.removeOption(
       interaction.guildId!,
       panel,
       role.id,
     );
 
+    if (!removed) {
+      return this.reply(
+        interaction,
+        t.roleNotInPanel({ role: mention, panel }),
+      );
+    }
+
+    const note = await this.refreshNote(interaction, panel);
     return this.reply(
       interaction,
-      removed
-        ? t.roleRemoved({ role: mention, panel })
-        : t.roleNotInPanel({ role: mention, panel }),
+      `${t.roleRemoved({ role: mention, panel })}\n${note}`,
     );
   }
 
@@ -273,7 +308,7 @@ export class SelfRoleCommands {
     @Options() { panel }: PanelDto,
   ) {
     const t = this.translate(interaction);
-    const result = await this.selfRoleService.publishPanel(
+    const result = await this.selfRolesService.publishPanel(
       interaction.guildId!,
       panel,
     );
@@ -295,7 +330,7 @@ export class SelfRoleCommands {
   })
   async onList(@Context() [interaction]: SlashCommandContext) {
     const t = this.translate(interaction).list;
-    const panels = await this.selfRoleService.listPanels(interaction.guildId!);
+    const panels = await this.selfRolesService.listPanels(interaction.guildId!);
 
     if (panels.length === 0) {
       return this.reply(interaction, t.empty);
@@ -335,7 +370,7 @@ export class SelfRoleCommands {
     @Options() { panel }: PanelDto,
   ) {
     const t = this.translate(interaction);
-    const deleted = await this.selfRoleService.deletePanel(
+    const deleted = await this.selfRolesService.deletePanel(
       interaction.guildId!,
       panel,
     );

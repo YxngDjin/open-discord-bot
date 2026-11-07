@@ -2,7 +2,7 @@ import type { SelfRoleMode } from '../../../generated/prisma/enums.js';
 import type {
   SyncRolesResult,
   ToggleRoleResult,
-} from '../self-role.service.js';
+} from '../self-roles.service.js';
 
 /** Answers to a click on a panel button, one per result of toggleRole. */
 const clicks: Record<ToggleRoleResult, (params: { role: string }) => string> = {
@@ -34,12 +34,12 @@ export const en = {
     panelFull: (params: { panel: number; max: number }) =>
       `❌ Panel #${params.panel} already has the maximum of ${params.max} roles.`,
     roleAdded: (params: { role: string; panel: number }) =>
-      `✅ ${params.role} added to panel #${params.panel}. Use \`/self-role publish\` to update the posted message.`,
+      `✅ ${params.role} added to panel #${params.panel}.`,
 
     roleNotInPanel: (params: { role: string; panel: number }) =>
       `❌ ${params.role} is not in panel #${params.panel}, or the panel doesn't exist.`,
     roleRemoved: (params: { role: string; panel: number }) =>
-      `✅ ${params.role} removed from panel #${params.panel}. Use \`/self-role publish\` to update the posted message.`,
+      `✅ ${params.role} removed from panel #${params.panel}.`,
 
     channelMissing: (params: { panel: number }) =>
       `❌ The channel of panel #${params.panel} no longer exists.`,
@@ -47,6 +47,11 @@ export const en = {
       `❌ I couldn't post panel #${params.panel}. Check that I can send messages and embeds in that channel, and that all emojis are valid.`,
     published: (params: { panel: number }) =>
       `✅ Panel #${params.panel} is posted and up to date.`,
+
+    // Second line after add-role / remove-role
+    refreshed: '🔄 The posted panel was updated.',
+    publishHint:
+      'The panel is not posted yet. Post it with `/self-role publish` when you are done.',
 
     deleted: (params: { panel: number }) =>
       `✅ Panel #${params.panel} deleted.`,
