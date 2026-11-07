@@ -13,16 +13,7 @@ import { xpTranslations } from './i18n/index.js';
 import { xpModule } from './xp.definition.js';
 import { levelFromXp } from './xp.formula.js';
 import { XpService } from './xp.service.js';
-
-export class RankDto {
-  @UserOption({
-    name: 'user',
-    description: 'Show the rank of another member',
-    description_localizations: { de: 'Rang eines anderen Mitglieds anzeigen' },
-    required: false,
-  })
-  user?: User;
-}
+import { RankDto } from './dto/dto.js';
 
 @Injectable()
 export class XpCommands {

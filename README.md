@@ -60,10 +60,11 @@ Further modules (tickets, giveaways, …) are planned.
 
 ## Self-hosting
 
+The recommended way is Docker: the bot and its database run in two containers, and you don't need Node.js on your machine.
+
 ### Requirements
 
-- [Node.js](https://nodejs.org) 22 or newer
-- [Docker](https://www.docker.com) with Docker Compose (for the PostgreSQL database)
+- [Docker](https://www.docker.com) with Docker Compose
 - A Discord application with a bot
 
 ### 1. Create the Discord bot
@@ -83,7 +84,6 @@ Further modules (tickets, giveaways, …) are planned.
 ```bash
 git clone https://github.com/YxngDjin/open-discord-bot.git
 cd open-discord-bot
-npm ci
 ```
 
 ### 3. Configure
@@ -98,49 +98,71 @@ Open `.env` and fill in the values. Every variable is explained in the file.
 |---|---|---|
 | `DISCORD_TOKEN` | yes | Your bot token |
 | `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | yes | Credentials for the database container. Choose your own password. |
-| `DATABASE_URL` | yes | Connection URL for the bot, built from the three values above |
+| `DATABASE_URL` | only without Docker | Connection URL for the bot. With Docker, `compose.yaml` builds it from the three values above, so you can leave the example value. |
 | `LOG_LEVEL` | no | `fatal`, `error`, `warn`, `log` (default), `debug` or `verbose` |
-| `DEV_GUILD_ID` | no | For development only: registers commands instantly on this one server |
+| `DEV_GUILD_ID` | no | For development only: registers commands instantly on this one server. Leave it empty for normal use. |
 
 The bot checks the configuration on startup and tells you exactly what is missing.
 
-### 4. Start the database
+### 4. Start
 
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
 
-Wait until `docker compose ps` shows the database as **healthy**.
-
-### 5. Prepare the database
+The first build takes a few minutes. Compose starts the database, waits until it is ready, applies all database migrations and then starts the bot. Follow the log with:
 
 ```bash
-npx prisma generate
-npx prisma migrate deploy
-```
-
-### 6. Start the bot
-
-```bash
-npm run build
-npm run start:prod
+docker compose logs -f app
 ```
 
 The bot logs `Logged in as …` when it is ready. Slash commands can take a moment to appear the first time.
 
 Then, on your server:
 
-1. `/module enable module:welcome` and/or `/module enable module:moderation`
-2. Configure the modules, e.g. `/welcome channel channel:#welcome`
+1. `/module list` shows all modules, `/module enable` turns them on.
+2. `/help` shows all commands of the enabled modules.
+
+### Updating
+
+```bash
+git pull
+docker compose up -d --build
+```
+
+New database migrations are applied automatically on startup. Your data is kept in the Docker volume `db-data`.
+
+### Stopping
+
+```bash
+docker compose down
+```
+
+This keeps your data. ⚠️ `docker compose down -v` also deletes the database volume and with it **all** data.
 
 ## Development
+
+For development, run the bot with Node.js and only the database in Docker.
+
+Requirements: [Node.js](https://nodejs.org) 22 or newer and Docker.
+
+```bash
+npm ci                         # install packages (also generates the Prisma client)
+docker compose up -d db        # start only the database
+npx prisma migrate deploy      # create the tables
+```
+
+`DATABASE_URL` in your `.env` must point to `localhost`, like in `.env.example`. Don't run the bot in Docker and with Node at the same time: both would answer every command.
 
 ```bash
 npm run start:dev    # start with auto-reload
 npm run lint         # lint
+npm run typecheck    # check types
 npm run format       # format with Prettier
 npm test             # run tests
 ```
+
+GitHub Actions runs type-check, lint, tests and build for every push to `main` and every pull request.
 
 Set `DEV_GUILD_ID` in your `.env` so command changes show up instantly on your test server.
 

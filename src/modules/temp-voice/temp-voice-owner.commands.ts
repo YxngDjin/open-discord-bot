@@ -16,6 +16,7 @@ import {
 import { resolveLocale } from '../../core/i18n/locales.js';
 import { tempVoiceTranslations } from './i18n/index.js';
 import { TempVoiceService } from './temp-voice.service.js';
+import { VoiceLimitDto, VoiceNameDto } from './dto/dto.js';
 
 type Interaction = SlashCommandContext[0];
 
@@ -27,32 +28,6 @@ export const VoiceCommandsDecorator = createCommandGroupDecorator({
   descriptionLocalizations: { de: 'Deinen temporären Voice-Channel verwalten' },
   contexts: [InteractionContextType.Guild],
 });
-
-export class VoiceNameDto {
-  @StringOption({
-    name: 'name',
-    description: 'New name of your channel',
-    description_localizations: { de: 'Neuer Name deines Channels' },
-    required: true,
-    min_length: 1,
-    max_length: 100,
-  })
-  name: string;
-}
-
-export class VoiceLimitDto {
-  @IntegerOption({
-    name: 'users',
-    description: 'Maximum number of users (0 = no limit)',
-    description_localizations: {
-      de: 'Maximale Anzahl Nutzer (0 = kein Limit)',
-    },
-    required: true,
-    min_value: 0,
-    max_value: 99,
-  })
-  users: number;
-}
 
 @Injectable()
 @VoiceCommandsDecorator()

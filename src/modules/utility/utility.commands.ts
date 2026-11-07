@@ -22,38 +22,13 @@ import { resolveLocale } from '../../core/i18n/locales.js';
 import { ModuleRegistryService } from '../../core/module-registry/module-registry.service.js';
 import { ModuleSettingsService } from '../../core/module-registry/module-settings.service.js';
 import { utilityTranslations } from './i18n/index.js';
+import { ClearDto, UserInfoDto } from './dto/dto.js';
 
 /** Discord timestamp with date and relative time, e.g. "14 November 2023 (3 years ago)". */
 const timestamp = (milliseconds: number) => {
   const seconds = Math.floor(milliseconds / 1000);
   return `<t:${seconds}:D> (<t:${seconds}:R>)`;
 };
-
-export class UserInfoDto {
-  @UserOption({
-    name: 'user',
-    description: 'The user to show (default: you)',
-    description_localizations: {
-      de: 'Der Nutzer, der angezeigt wird (Standard: du)',
-    },
-    required: false,
-  })
-  user?: User;
-}
-
-export class ClearDto {
-  @IntegerOption({
-    name: 'amount',
-    description: 'Number of messages to delete (1-100)',
-    description_localizations: {
-      de: 'Anzahl der Nachrichten, die gelöscht werden (1-100)',
-    },
-    required: true,
-    min_value: 1,
-    max_value: 100,
-  })
-  amount: number;
-}
 
 @Injectable()
 export class UtilityCommands {

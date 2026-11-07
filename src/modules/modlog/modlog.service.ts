@@ -90,7 +90,7 @@ export class ModlogService {
       .setColor(JOIN_COLOR)
       .setThumbnail(member.user.displayAvatarURL())
       .addFields(
-        { name: t.fields.user, value: `${member} (${member.id})` },
+        { name: t.fields.user, value: `<@${member.id}> (${member.id})` },
         {
           name: t.fields.accountCreated,
           value: toTimestamp(member.user.createdAt),

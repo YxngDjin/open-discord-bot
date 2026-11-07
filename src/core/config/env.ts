@@ -21,7 +21,5 @@ export const validateEnv = (config: Record<string, unknown>): Env => {
     .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
     .join('\n');
 
-  console.log(details);
-
-  throw new Error(`Ungültige Konfiguration:\n${details}`);
+  throw new Error(`Invalid Configuration: \n${details}`);
 };

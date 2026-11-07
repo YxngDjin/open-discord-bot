@@ -1,0 +1,30 @@
+# Secrets: never put them into an image
+.env
+.env.*
+!.env.example
+
+# Built inside the container for Linux; the macOS versions don't work there
+node_modules
+dist
+src/generated
+
+# Not needed to run the bot
+.git
+.github
+coverage
+*.tsbuildinfo
+*.md
+**/*.spec.ts
+
+# Editor and AI tool folders
+.vscode
+.idea
+.agents
+.claude
+.windsurf
+skills-lock.json
+
+# Docker files themselves (changing them should not invalidate the build cache)
+Dockerfile
+.dockerignore
+compose.yaml
