@@ -21,6 +21,9 @@ export const de = {
   // /leaderboard
   leaderboardTitle: '🏆 **Bestenliste**',
   leaderboardEmpty: 'Auf diesem Server hat noch niemand XP gesammelt.',
+  // Small grey line below the automatic leaderboard (server language)
+  leaderboardUpdated: (params: { time: string }) =>
+    `-# Aktualisiert ${params.time}`,
   leaderboardLine: (params: {
     position: number;
     user: string;
@@ -42,6 +45,9 @@ export const de = {
       enabled: 'aktiviert',
       disabled: 'deaktiviert',
       sameChannel: 'im selben Channel',
+      dailyLeaderboard: 'Tägliche Bestenliste',
+      dailyAt: (params: { channel: string; time: string; timezone: string }) =>
+        `${params.channel} um ${params.time} (${params.timezone})`,
     },
     messageXpSet: (params: { amount: number }) =>
       params.amount === 0
@@ -70,5 +76,19 @@ export const de = {
       `✅ Die Level-Rolle für **Level ${params.level}** wurde entfernt.`,
     roleNotFound: (params: { level: number }) =>
       `Für **Level ${params.level}** gibt es keine Level-Rolle.`,
+    leaderboardChannelSet: (params: {
+      channel: string;
+      time: string;
+      timezone: string;
+    }) =>
+      `✅ Die Bestenliste wird jeden Tag um **${params.time}** (${params.timezone}) in ${params.channel} aktualisiert.\n` +
+      'Die Uhrzeit änderst du mit `/xp leaderboard-time`, die Zeitzone mit `/timezone`.',
+    leaderboardChannelRemoved: '✅ Die tägliche Bestenliste ist ausgeschaltet.',
+    leaderboardMissingPermissions:
+      '⚠️ Ich kann in diesem Channel keine Nachrichten senden. Gib mir dort **Kanal ansehen** und **Nachrichten senden**.',
+    leaderboardTimeSet: (params: { time: string; timezone: string }) =>
+      `✅ Die Bestenliste wird jeden Tag um **${params.time}** (${params.timezone}) aktualisiert.`,
+    leaderboardTimeInvalid: (params: { time: string }) =>
+      `❌ **${params.time}** ist keine gültige Uhrzeit. Nutze das Format HH:MM, z. B. 18:00 oder 09:30.`,
   },
 } satisfies XpTranslations;

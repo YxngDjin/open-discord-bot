@@ -16,12 +16,14 @@ import {
   Options,
   RoleOption,
   type SlashCommandContext,
+  StringOption,
   Subcommand,
 } from 'necord';
+import { I18nService } from '../../core/i18n/i18n.service.js';
 import { resolveLocale } from '../../core/i18n/locales.js';
 import { ModuleSettingsService } from '../../core/module-registry/module-settings.service.js';
 import { xpTranslations } from './i18n/index.js';
-import { xpModule } from './xp.definition.js';
+import { xpModule, xpSettingsSchema } from './xp.definition.js';
 
 type Interaction = SlashCommandContext[0];
 
@@ -134,10 +136,40 @@ export class XpRoleRemoveDto {
   level: number;
 }
 
+export class XpLeaderboardChannelDto {
+  @ChannelOption({
+    name: 'channel',
+    description: 'Channel for the daily leaderboard (empty = turn off)',
+    description_localizations: {
+      de: 'Channel für die tägliche Bestenliste (leer = ausschalten)',
+    },
+    required: false,
+    channel_types: [ChannelType.GuildText, ChannelType.GuildAnnouncement],
+  })
+  channel?: GuildBasedChannel;
+}
+
+export class XpLeaderboardTimeDto {
+  @StringOption({
+    name: 'time',
+    description: 'Time in the server time zone, e.g. 18:00',
+    description_localizations: {
+      de: 'Uhrzeit in der Zeitzone des Servers, z. B. 18:00',
+    },
+    required: true,
+    min_length: 5,
+    max_length: 5,
+  })
+  time: string;
+}
+
 @Injectable()
 @XpSettingsCommandsDecorator()
 export class XpSettingsCommands {
-  constructor(private readonly settings: ModuleSettingsService) {}
+  constructor(
+    private readonly settings: ModuleSettingsService,
+    private readonly i18n: I18nService,
+  ) {}
 
   private translate(interaction: Interaction) {
     return xpTranslations[resolveLocale(interaction.locale)].admin;
@@ -169,6 +201,15 @@ export class XpSettingsCommands {
             .join(', ')
         : t.none;
 
+    const timezone = await this.i18n.getGuildTimezone(interaction.guildId!);
+    const daily = s.leaderboardChannelId
+      ? t.dailyAt({
+          channel: `<#${s.leaderboardChannelId}>`,
+          time: s.leaderboardTime,
+          timezone,
+        })
+      : t.off;
+
     const lines = [
       `${t.messageXp}: ${s.messageXp === 0 ? t.off : s.messageXp}`,
       `${t.cooldown}: ${s.messageCooldownSeconds}s`,
@@ -176,6 +217,7 @@ export class XpSettingsCommands {
       `${t.ignoredChannels}: ${ignored}`,
       `${t.levelUpMessages}: ${levelUp}`,
       `${t.levelRoles}: ${roles}`,
+      `${t.dailyLeaderboard}: ${daily}`,
     ];
 
     return interaction.reply({
@@ -367,6 +409,90 @@ export class XpSettingsCommands {
 
     return interaction.reply({
       content: t.roleRemoved({ level }),
+      flags: MessageFlags.Ephemeral,
+    });
+  }
+
+  @Subcommand({
+    name: 'leaderboard-channel',
+    description: 'Set or remove the channel for the daily leaderboard',
+    descriptionLocalizations: {
+      de: 'Channel für die tägliche Bestenliste setzen oder entfernen',
+    },
+  })
+  public async onLeaderboardChannel(
+    @Context() [interaction]: SlashCommandContext,
+    @Options() { channel }: XpLeaderboardChannelDto,
+  ) {
+    const t = this.translate(interaction);
+    const guildId = interaction.guildId!;
+    const s = await this.settings.updateSettings(guildId, xpModule, {
+      leaderboardChannelId: channel?.id,
+    });
+
+    if (!channel) {
+      return interaction.reply({
+        content: t.leaderboardChannelRemoved,
+        flags: MessageFlags.Ephemeral,
+      });
+    }
+
+    const timezone = await this.i18n.getGuildTimezone(guildId);
+    const message = t.leaderboardChannelSet({
+      channel: `<#${channel.id}>`,
+      time: s.leaderboardTime,
+      timezone,
+    });
+
+    // Warn right away instead of failing silently every day
+    const me = interaction.guild?.members.me;
+    const canPost =
+      me &&
+      channel
+        .permissionsFor(me)
+        ?.has([
+          PermissionFlagsBits.ViewChannel,
+          PermissionFlagsBits.SendMessages,
+        ]);
+
+    return interaction.reply({
+      content: canPost
+        ? message
+        : `${message}\n${t.leaderboardMissingPermissions}`,
+      flags: MessageFlags.Ephemeral,
+    });
+  }
+
+  @Subcommand({
+    name: 'leaderboard-time',
+    description: 'Set the time of the daily leaderboard',
+    descriptionLocalizations: {
+      de: 'Uhrzeit der täglichen Bestenliste festlegen',
+    },
+  })
+  public async onLeaderboardTime(
+    @Context() [interaction]: SlashCommandContext,
+    @Options() { time }: XpLeaderboardTimeDto,
+  ) {
+    const t = this.translate(interaction);
+    const guildId = interaction.guildId!;
+
+    // Same rule as in the settings schema (HH:MM), so both always agree
+    if (!xpSettingsSchema.shape.leaderboardTime.safeParse(time).success) {
+      return interaction.reply({
+        content: t.leaderboardTimeInvalid({ time }),
+        flags: MessageFlags.Ephemeral,
+        allowedMentions: { parse: [] },
+      });
+    }
+
+    await this.settings.updateSettings(guildId, xpModule, {
+      leaderboardTime: time,
+    });
+    const timezone = await this.i18n.getGuildTimezone(guildId);
+
+    return interaction.reply({
+      content: t.leaderboardTimeSet({ time, timezone }),
       flags: MessageFlags.Ephemeral,
     });
   }

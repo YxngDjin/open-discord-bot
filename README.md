@@ -16,7 +16,7 @@ Everything is split into **modules** that server admins can turn on and off per 
 | **Welcome** | Welcome and goodbye messages with placeholders, automatic roles for new members (with optional delay) |
 | **Moderation** | Warn, timeout, kick, ban and unban with numbered cases per server and a case history per user |
 | **Mod log** | Posts moderation cases, joins and leaves to a log channel |
-| **XP & levels** | XP for messages and voice time, level-up messages, level roles, rank card and leaderboard |
+| **XP & levels** | XP for messages and voice time, level-up messages, level roles, rank card, leaderboard and a daily leaderboard that updates itself |
 | **Self roles** | Panels with buttons or a select menu where members pick their own roles |
 | **Temp voice** | "Join to create" voice channels that members can rename, limit and lock, deleted automatically when empty |
 | **Utility** | `/help`, `/serverinfo`, `/userinfo`, `/clear` and `/ping` (always on) |
@@ -36,6 +36,7 @@ Further modules (tickets, giveaways, …) are planned.
 | `/ping` | everyone | Shows the bot's latency |
 | `/module list \| enable \| disable` | Manage Server | Show modules and turn them on or off |
 | `/language [language]` | Manage Server | Show or change the server language |
+| `/timezone [timezone]` | Manage Server | Show or change the server time zone (with suggestions while typing) |
 | `/welcome show \| channel \| message \| goodbye` | Manage Server | Configure welcome and goodbye messages |
 | `/welcome autorole-add \| autorole-remove \| autorole-delay` | Manage Server | Configure automatic roles |
 | `/mod warn \| timeout \| kick \| ban \| unban` | Moderate Members* | Moderation actions, each creates a numbered case |
@@ -45,6 +46,7 @@ Further modules (tickets, giveaways, …) are planned.
 | `/leaderboard` | everyone | Top 10 members by XP |
 | `/xp show \| message-xp \| cooldown \| voice-xp` | Manage Server | Configure how much XP members earn |
 | `/xp ignore-channel \| levelup \| role-add \| role-remove` | Manage Server | Ignored channels, level-up messages and level roles |
+| `/xp leaderboard-channel \| leaderboard-time` | Manage Server | Daily leaderboard: where and when it is updated |
 | `/self-role create \| list \| delete` | Manage Server | Create, list and delete self role panels |
 | `/self-role add-role \| remove-role \| publish` | Manage Server | Choose the roles of a panel and post it |
 | `/tempvoice show \| channel \| category` | Manage Server | Set the join-to-create channel and where new channels go |
@@ -59,7 +61,7 @@ Further modules (tickets, giveaways, …) are planned.
 
 **How temporary voice channels work:** set a voice channel with `/tempvoice channel`. Whoever joins it gets their own voice channel and is moved there. The owner can change it with `/voice`. When a channel is empty for the time set with `/tempvoice delete-after` (default 3 minutes), the bot deletes it, also if it was offline in the meantime. Placeholder for the name: `{user}`.
 
-**How XP works:** members earn XP for messages (with a cooldown against spam) and for every minute in a voice channel. Voice XP is only given when at least two people are in the channel, not in the AFK channel and not while deafened. Admins can exclude channels with `/xp ignore-channel`.
+**How XP works:** members earn XP for messages (with a cooldown against spam) and for every minute in a voice channel. Voice XP is only given when at least two people are in the channel, not in the AFK channel and not while deafened. Admins can exclude channels with `/xp ignore-channel`. With `/xp leaderboard-channel`, the bot keeps one leaderboard message in a channel and updates it every day at the time set with `/xp leaderboard-time` (default 18:00), in the server time zone set with `/timezone`.
 
 ## Self-hosting
 

@@ -14,6 +14,7 @@ import { xpModule } from './xp.definition.js';
 import { levelFromXp } from './xp.formula.js';
 import { XpService } from './xp.service.js';
 import { RankDto } from './dto/dto.js';
+import { renderLeaderboard } from './leaderboard.render.js';
 
 @Injectable()
 export class XpCommands {
@@ -114,7 +115,7 @@ export class XpCommands {
     );
 
     return interaction.reply({
-      content: `${t.leaderboardTitle}\n${lines.join('\n')}`,
+      content: renderLeaderboard(entries, locale),
       allowedMentions: { parse: [] },
     });
   }

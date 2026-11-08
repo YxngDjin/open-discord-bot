@@ -10,6 +10,20 @@ import {
 export class I18nService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async getGuildTimezone(guildId: string): Promise<string> {
+    const guild = await this.prisma.guild.findUnique({
+      where: { id: guildId },
+    });
+    return guild?.timezone ?? 'UTC';
+  }
+
+  async setGuildTimezone(guildId: string, timezone: string) {
+    await this.prisma.guild.update({
+      where: { id: guildId },
+      data: { timezone },
+    });
+  }
+
   async getGuildLocale(guildId: string): Promise<SupportedLocale> {
     const guild = await this.prisma.guild.findUnique({
       where: { id: guildId },

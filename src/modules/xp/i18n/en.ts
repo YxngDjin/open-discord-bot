@@ -19,6 +19,8 @@ export const en = {
   // /leaderboard
   leaderboardTitle: '🏆 **Leaderboard**',
   leaderboardEmpty: 'Nobody has earned XP on this server yet.',
+  // Small grey line below the automatic leaderboard (server language)
+  leaderboardUpdated: (params: { time: string }) => `-# Updated ${params.time}`,
   leaderboardLine: (params: {
     position: number;
     user: string;
@@ -40,6 +42,9 @@ export const en = {
       enabled: 'enabled',
       disabled: 'disabled',
       sameChannel: 'in the same channel',
+      dailyLeaderboard: 'Daily leaderboard',
+      dailyAt: (params: { channel: string; time: string; timezone: string }) =>
+        `${params.channel} at ${params.time} (${params.timezone})`,
     },
     messageXpSet: (params: { amount: number }) =>
       params.amount === 0
@@ -68,6 +73,20 @@ export const en = {
       `✅ The level role for **level ${params.level}** was removed.`,
     roleNotFound: (params: { level: number }) =>
       `There is no level role for **level ${params.level}**.`,
+    leaderboardChannelSet: (params: {
+      channel: string;
+      time: string;
+      timezone: string;
+    }) =>
+      `✅ The leaderboard will be updated in ${params.channel} every day at **${params.time}** (${params.timezone}).\n` +
+      'Change the time with `/xp leaderboard-time` and the time zone with `/timezone`.',
+    leaderboardChannelRemoved: '✅ The daily leaderboard is turned off.',
+    leaderboardMissingPermissions:
+      "⚠️ I can't send messages in that channel. Give me **View Channel** and **Send Messages** there.",
+    leaderboardTimeSet: (params: { time: string; timezone: string }) =>
+      `✅ The leaderboard will be updated every day at **${params.time}** (${params.timezone}).`,
+    leaderboardTimeInvalid: (params: { time: string }) =>
+      `❌ **${params.time}** is not a valid time. Use the format HH:MM, e.g. 18:00 or 09:30.`,
   },
 };
 
