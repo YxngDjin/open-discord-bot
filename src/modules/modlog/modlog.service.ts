@@ -48,11 +48,12 @@ export class ModlogService {
     if (!target) return;
     const { channel, t } = target;
 
+    const locale = await this.i18n.getGuildLocale(event.guildId);
     const embed = new EmbedBuilder()
       .setTitle(
         t.caseTitle({
           caseNumber: event.caseNumber,
-          type: t.caseTypes[event.type],
+          type: translations[locale].moderation.caseTypes[event.type],
         }),
       )
       .setColor(caseColors[event.type])

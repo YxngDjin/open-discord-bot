@@ -93,6 +93,7 @@ export const de = {
       joined: 'Server beigetreten',
       none: 'keine',
       unknown: 'unbekannt',
+      moreRoles: (params: { count: number }) => `+${params.count} weitere`,
       notMember: '❌ Dieser Nutzer ist kein Mitglied dieses Servers.',
     },
 
@@ -196,15 +197,6 @@ export const de = {
       channel: 'Log-Channel (leer lassen zum Entfernen)',
       event: 'Was geloggt werden soll',
       enabled: 'Dieses Ereignis loggen',
-    },
-
-    // Moderation cases (log channel, server language)
-    caseTypes: {
-      WARN: 'Verwarnung',
-      TIMEOUT: 'Timeout',
-      KICK: 'Kick',
-      BAN: 'Bann',
-      UNBAN: 'Entbannung',
     },
 
     caseTitle: (params: { caseNumber: number; type: string }) =>

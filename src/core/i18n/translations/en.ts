@@ -100,6 +100,7 @@ export const en = {
       joined: 'Joined server',
       none: 'none',
       unknown: 'unknown',
+      moreRoles: (params: { count: number }) => `+${params.count} more`,
       notMember: '❌ This user is not a member of this server.',
     },
 
@@ -200,15 +201,6 @@ export const en = {
       event: 'What should be logged',
       enabled: 'Log this event',
     },
-
-    // Moderation cases (log channel, server language)
-    caseTypes: {
-      WARN: 'Warning',
-      TIMEOUT: 'Timeout',
-      KICK: 'Kick',
-      BAN: 'Ban',
-      UNBAN: 'Unban',
-    } satisfies Record<CaseType, string>,
 
     caseTitle: (params: { caseNumber: number; type: string }) =>
       `Case #${params.caseNumber} • ${params.type}`,
