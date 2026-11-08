@@ -106,16 +106,18 @@ Open `.env` and fill in the values. Every variable is explained in the file.
 | `DATABASE_URL` | only without Docker | Connection URL for the bot. With Docker, `compose.yaml` builds it from the three values above, so you can leave the example value. |
 | `LOG_LEVEL` | no | `fatal`, `error`, `warn`, `log` (default), `debug` or `verbose` |
 | `DEV_GUILD_ID` | no | For development only: registers commands instantly on this one server. Leave it empty for normal use. |
+| `BOT_TAG` | no | Which Docker image to run: `latest` (default) is the newest release, a version like `0.2.0` keeps the bot on that version, `development` is the current development state and may be unstable. |
 
 The bot checks the configuration on startup and tells you exactly what is missing.
 
 ### 4. Start
 
 ```bash
-docker compose up -d --build
+docker compose pull
+docker compose up -d
 ```
 
-The first build takes a few minutes. Compose starts the database, waits until it is ready, applies all database migrations and then starts the bot. Follow the log with:
+Compose downloads the ready-made image for your platform (amd64 or arm64, e.g. a Raspberry Pi), starts the database, waits until it is ready, applies all database migrations and then starts the bot. Follow the log with:
 
 ```bash
 docker compose logs -f app
@@ -125,17 +127,21 @@ The bot logs `Logged in as …` when it is ready. Slash commands can take a mome
 
 Then, on your server:
 
-1. `/module list` shows all modules, `/module enable` turns them on.
-2. `/help` shows all commands of the enabled modules.
+1. `/language` and `/timezone` set the language and time zone of your server. The time zone is used for scheduled posts like the daily leaderboard.
+2. `/module list` shows all modules, `/module enable` turns them on.
+3. `/help` shows all commands of the enabled modules.
+
+> Prefer to build the image yourself from the code? Run `docker compose up -d --build` instead. This takes a few minutes, especially on a Raspberry Pi.
 
 ### Updating
 
 ```bash
 git pull
-docker compose up -d --build
+docker compose pull
+docker compose up -d
 ```
 
-New database migrations are applied automatically on startup. Your data is kept in the Docker volume `db-data`.
+`git pull` gets changes to `compose.yaml` and `.env.example`, `docker compose pull` downloads the new image. New database migrations are applied automatically on startup. See the [releases](https://github.com/YxngDjin/open-discord-bot/releases) for what changed. Your data is kept in the Docker volume `db-data`.
 
 ### Stopping
 
