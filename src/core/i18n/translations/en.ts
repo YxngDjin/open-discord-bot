@@ -521,12 +521,145 @@ export const en = {
       `🔨 **${params.user}** was banned. (Case #${params.caseNumber})`,
     unbanned: (params: { user: string; caseNumber: number }) =>
       `✅ **${params.user}** was unbanned. (Case #${params.caseNumber})`,
-    notBanned: (params: { user: string }) => `**${params.user}** is not banned.`,
+    notBanned: (params: { user: string }) =>
+      `**${params.user}** is not banned.`,
 
     noCases: (params: { user: string }) => `No cases for **${params.user}**.`,
     casesTitle: (params: { user: string }) => `**Cases for ${params.user}:**`,
     by: 'by',
     noReason: 'no reason',
+  },
+
+  // XP module
+  xp: {
+    commands: {
+      rank: 'Show your level and rank',
+      leaderboard: 'Show the top 10 members',
+      // /xp (admin)
+      settings: {
+        group: 'Configure the XP and level system',
+        show: 'Show the current XP settings',
+        messageXp: 'Set the XP per message',
+        cooldown: 'Set the cooldown between XP for messages',
+        voiceXp: 'Set the XP per minute in voice channels',
+        ignoreChannel: 'Ignore a channel for XP, or stop ignoring it',
+        levelup: 'Enable or disable level-up messages',
+        roleAdd: 'Give a role when members reach a level',
+        roleRemove: 'Remove the role for a level',
+        leaderboardChannel:
+          'Set or remove the channel for the daily leaderboard',
+        leaderboardTime: 'Set the time of the daily leaderboard',
+      },
+    },
+    // /xp message-xp and /xp voice-xp share "amount"
+    options: {
+      rankUser: 'Show the rank of another member',
+      amount: 'Amount of XP (0 = off)',
+      seconds: 'Seconds before a message gives XP again (0-3600)',
+      ignoreChannel: 'Channel to ignore or stop ignoring',
+      levelupEnabled: 'Send a message when someone levels up',
+      levelupChannel: 'Where to send it (empty = same channel as the message)',
+      roleAddLevel: 'Level at which the role is given',
+      roleAddRole: 'The role to give',
+      roleRemoveLevel: 'Level whose role should be removed',
+      leaderboardChannel:
+        'Channel for the daily leaderboard (empty = turn off)',
+      leaderboardTime: 'Time in the server time zone, e.g. 18:00',
+    },
+
+    // Level-up message (public, server language)
+    levelUp: (params: { user: string; level: number }) =>
+      `🎉 ${params.user} reached **level ${params.level}**!`,
+
+    // General
+    moduleDisabled: 'The XP module is disabled on this server.',
+
+    // /rank
+    noXp: (params: { user: string }) => `**${params.user}** has no XP yet.`,
+    rankTitle: (params: { user: string }) => `📊 **${params.user}**`,
+    rankLevel: (params: { level: number; rank: number }) =>
+      `Level ${params.level} • Rank #${params.rank}`,
+    rankProgress: (params: { bar: string; current: string; needed: string }) =>
+      `${params.bar} ${params.current} / ${params.needed} XP`,
+    rankStats: (params: { messages: string; minutes: string }) =>
+      `💬 ${params.messages} messages • 🎙️ ${params.minutes} minutes in voice`,
+
+    // /leaderboard
+    leaderboardTitle: '🏆 **Leaderboard**',
+    leaderboardEmpty: 'Nobody has earned XP on this server yet.',
+    // Small grey line below the automatic leaderboard (server language)
+    leaderboardUpdated: (params: { time: string }) =>
+      `-# Updated ${params.time}`,
+    leaderboardLine: (params: {
+      position: number;
+      user: string;
+      level: number;
+      xp: string;
+    }) =>
+      `**${params.position}.** ${params.user} • Level ${params.level} • ${params.xp} XP`,
+    // /xp (admin settings)
+    admin: {
+      show: {
+        messageXp: 'XP per message',
+        cooldown: 'Message cooldown',
+        voiceXp: 'XP per voice minute',
+        ignoredChannels: 'Ignored channels',
+        levelUpMessages: 'Level-up messages',
+        levelRoles: 'Level roles',
+        none: 'none',
+        off: 'off',
+        enabled: 'enabled',
+        disabled: 'disabled',
+        sameChannel: 'in the same channel',
+        dailyLeaderboard: 'Daily leaderboard',
+        dailyAt: (params: {
+          channel: string;
+          time: string;
+          timezone: string;
+        }) => `${params.channel} at ${params.time} (${params.timezone})`,
+      },
+      messageXpSet: (params: { amount: number }) =>
+        params.amount === 0
+          ? '✅ Members no longer get XP for messages.'
+          : `✅ Members now get **${params.amount} XP** per message.`,
+      cooldownSet: (params: { seconds: number }) =>
+        `✅ Message cooldown set to **${params.seconds} second(s)**.`,
+      voiceXpSet: (params: { amount: number }) =>
+        params.amount === 0
+          ? '✅ Members no longer get XP in voice channels.'
+          : `✅ Members now get **${params.amount} XP** per minute in voice.`,
+      channelIgnored: (params: { channel: string }) =>
+        `✅ ${params.channel} is now ignored. Activity there gives no XP.`,
+      channelUnignored: (params: { channel: string }) =>
+        `✅ ${params.channel} is no longer ignored.`,
+      levelUpEnabledSame:
+        '✅ Level-up messages are enabled and sent in the channel where the member wrote.',
+      levelUpEnabledIn: (params: { channel: string }) =>
+        `✅ Level-up messages are enabled and sent in ${params.channel}.`,
+      levelUpDisabled: '✅ Level-up messages are disabled.',
+      roleNotEditable: (params: { role: string }) =>
+        `I can't assign ${params.role}. Make sure I have the **Manage Roles** permission and my role is above it in the role list.`,
+      roleSet: (params: { level: number; role: string }) =>
+        `✅ Members now get ${params.role} at **level ${params.level}**.`,
+      roleRemoved: (params: { level: number }) =>
+        `✅ The level role for **level ${params.level}** was removed.`,
+      roleNotFound: (params: { level: number }) =>
+        `There is no level role for **level ${params.level}**.`,
+      leaderboardChannelSet: (params: {
+        channel: string;
+        time: string;
+        timezone: string;
+      }) =>
+        `✅ The leaderboard will be updated in ${params.channel} every day at **${params.time}** (${params.timezone}).\n` +
+        'Change the time with `/xp leaderboard-time` and the time zone with `/timezone`.',
+      leaderboardChannelRemoved: '✅ The daily leaderboard is turned off.',
+      leaderboardMissingPermissions:
+        "⚠️ I can't send messages in that channel. Give me **View Channel** and **Send Messages** there.",
+      leaderboardTimeSet: (params: { time: string; timezone: string }) =>
+        `✅ The leaderboard will be updated every day at **${params.time}** (${params.timezone}).`,
+      leaderboardTimeInvalid: (params: { time: string }) =>
+        `❌ **${params.time}** is not a valid time. Use the format HH:MM, e.g. 18:00 or 09:30.`,
+    },
   },
 };
 

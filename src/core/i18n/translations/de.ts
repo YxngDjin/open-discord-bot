@@ -491,7 +491,8 @@ export const de = {
 
     moduleDisabled: 'Moderation ist auf diesem Server deaktiviert.',
     memberNotFound: 'Dieser Nutzer ist kein Mitglied dieses Servers.',
-    cannotWarnSelfOrBot: 'Du kannst dich selbst oder einen Bot nicht verwarnen.',
+    cannotWarnSelfOrBot:
+      'Du kannst dich selbst oder einen Bot nicht verwarnen.',
 
     targetErrors: {
       self: 'Du kannst dich nicht selbst moderieren.',
@@ -524,9 +525,144 @@ export const de = {
     notBanned: (params: { user: string }) =>
       `**${params.user}** ist nicht gebannt.`,
 
-    noCases: (params: { user: string }) => `Keine Fälle für **${params.user}**.`,
+    noCases: (params: { user: string }) =>
+      `Keine Fälle für **${params.user}**.`,
     casesTitle: (params: { user: string }) => `**Fälle von ${params.user}:**`,
     by: 'von',
     noReason: 'kein Grund',
+  },
+
+  // XP module
+  xp: {
+    commands: {
+      rank: 'Zeige dein Level und deinen Rang',
+      leaderboard: 'Zeige die Top 10 Mitglieder',
+      // /xp (admin)
+      settings: {
+        group: 'XP- und Level-System einstellen',
+        show: 'Zeige die aktuellen XP-Einstellungen',
+        messageXp: 'Setze die XP pro Nachricht',
+        cooldown: 'Setze den Cooldown zwischen XP für Nachrichten',
+        voiceXp: 'Setze die XP pro Minute in Voice-Channels',
+        ignoreChannel: 'Channel für XP ignorieren oder nicht mehr ignorieren',
+        levelup: 'Level-Up-Nachrichten aktivieren oder deaktivieren',
+        roleAdd: 'Rolle vergeben, wenn Mitglieder ein Level erreichen',
+        roleRemove: 'Rolle für ein Level entfernen',
+        leaderboardChannel:
+          'Channel für die tägliche Bestenliste setzen oder entfernen',
+        leaderboardTime: 'Uhrzeit der täglichen Bestenliste festlegen',
+      },
+    },
+    // /xp message-xp and /xp voice-xp share "amount"
+    options: {
+      rankUser: 'Rang eines anderen Mitglieds anzeigen',
+      amount: 'Menge an XP (0 = aus)',
+      seconds: 'Sekunden, bis eine Nachricht wieder XP bringt (0-3600)',
+      ignoreChannel:
+        'Channel, der ignoriert bzw. nicht mehr ignoriert werden soll',
+      levelupEnabled: 'Nachricht senden, wenn jemand ein Level aufsteigt',
+      levelupChannel: 'Wohin (leer = derselbe Channel wie die Nachricht)',
+      roleAddLevel: 'Level, ab dem die Rolle vergeben wird',
+      roleAddRole: 'Die Rolle, die vergeben werden soll',
+      roleRemoveLevel: 'Level, dessen Rolle entfernt werden soll',
+      leaderboardChannel:
+        'Channel für die tägliche Bestenliste (leer = ausschalten)',
+      leaderboardTime: 'Uhrzeit in der Zeitzone des Servers, z. B. 18:00',
+    },
+
+    // Level-up message (public, server language)
+    levelUp: (params: { user: string; level: number }) =>
+      `🎉 ${params.user} hat **Level ${params.level}** erreicht!`,
+
+    // General
+    moduleDisabled: 'Das XP-Modul ist auf diesem Server deaktiviert.',
+
+    // /rank
+    noXp: (params: { user: string }) => `**${params.user}** hat noch keine XP.`,
+    rankTitle: (params: { user: string }) => `📊 **${params.user}**`,
+    rankLevel: (params: { level: number; rank: number }) =>
+      `Level ${params.level} • Platz #${params.rank}`,
+    rankProgress: (params: { bar: string; current: string; needed: string }) =>
+      `${params.bar} ${params.current} / ${params.needed} XP`,
+    rankStats: (params: { messages: string; minutes: string }) =>
+      `💬 ${params.messages} Nachrichten • 🎙️ ${params.minutes} Minuten Voice`,
+
+    // /leaderboard
+    leaderboardTitle: '🏆 **Bestenliste**',
+    leaderboardEmpty: 'Auf diesem Server hat noch niemand XP gesammelt.',
+    // Small grey line below the automatic leaderboard (server language)
+    leaderboardUpdated: (params: { time: string }) =>
+      `-# Aktualisiert ${params.time}`,
+    leaderboardLine: (params: {
+      position: number;
+      user: string;
+      level: number;
+      xp: string;
+    }) =>
+      `**${params.position}.** ${params.user} • Level ${params.level} • ${params.xp} XP`,
+    // /xp (admin settings)
+    admin: {
+      show: {
+        messageXp: 'XP pro Nachricht',
+        cooldown: 'Cooldown für Nachrichten',
+        voiceXp: 'XP pro Voice-Minute',
+        ignoredChannels: 'Ignorierte Channels',
+        levelUpMessages: 'Level-Up-Nachrichten',
+        levelRoles: 'Level-Rollen',
+        none: 'keine',
+        off: 'aus',
+        enabled: 'aktiviert',
+        disabled: 'deaktiviert',
+        sameChannel: 'im selben Channel',
+        dailyLeaderboard: 'Tägliche Bestenliste',
+        dailyAt: (params: {
+          channel: string;
+          time: string;
+          timezone: string;
+        }) => `${params.channel} um ${params.time} (${params.timezone})`,
+      },
+      messageXpSet: (params: { amount: number }) =>
+        params.amount === 0
+          ? '✅ Mitglieder bekommen keine XP mehr für Nachrichten.'
+          : `✅ Mitglieder bekommen jetzt **${params.amount} XP** pro Nachricht.`,
+      cooldownSet: (params: { seconds: number }) =>
+        `✅ Cooldown für Nachrichten auf **${params.seconds} Sekunde(n)** gesetzt.`,
+      voiceXpSet: (params: { amount: number }) =>
+        params.amount === 0
+          ? '✅ Mitglieder bekommen keine XP mehr in Voice-Channels.'
+          : `✅ Mitglieder bekommen jetzt **${params.amount} XP** pro Minute in Voice.`,
+      channelIgnored: (params: { channel: string }) =>
+        `✅ ${params.channel} wird jetzt ignoriert. Aktivität dort bringt keine XP.`,
+      channelUnignored: (params: { channel: string }) =>
+        `✅ ${params.channel} wird nicht mehr ignoriert.`,
+      levelUpEnabledSame:
+        '✅ Level-Up-Nachrichten sind aktiviert und erscheinen im Channel, in dem das Mitglied geschrieben hat.',
+      levelUpEnabledIn: (params: { channel: string }) =>
+        `✅ Level-Up-Nachrichten sind aktiviert und erscheinen in ${params.channel}.`,
+      levelUpDisabled: '✅ Level-Up-Nachrichten sind deaktiviert.',
+      roleNotEditable: (params: { role: string }) =>
+        `Ich kann ${params.role} nicht vergeben. Stell sicher, dass ich die Berechtigung **Rollen verwalten** habe und meine Rolle in der Rollenliste darüber steht.`,
+      roleSet: (params: { level: number; role: string }) =>
+        `✅ Mitglieder bekommen ab **Level ${params.level}** die Rolle ${params.role}.`,
+      roleRemoved: (params: { level: number }) =>
+        `✅ Die Level-Rolle für **Level ${params.level}** wurde entfernt.`,
+      roleNotFound: (params: { level: number }) =>
+        `Für **Level ${params.level}** gibt es keine Level-Rolle.`,
+      leaderboardChannelSet: (params: {
+        channel: string;
+        time: string;
+        timezone: string;
+      }) =>
+        `✅ Die Bestenliste wird jeden Tag um **${params.time}** (${params.timezone}) in ${params.channel} aktualisiert.\n` +
+        'Die Uhrzeit änderst du mit `/xp leaderboard-time`, die Zeitzone mit `/timezone`.',
+      leaderboardChannelRemoved:
+        '✅ Die tägliche Bestenliste ist ausgeschaltet.',
+      leaderboardMissingPermissions:
+        '⚠️ Ich kann in diesem Channel keine Nachrichten senden. Gib mir dort **Kanal ansehen** und **Nachrichten senden**.',
+      leaderboardTimeSet: (params: { time: string; timezone: string }) =>
+        `✅ Die Bestenliste wird jeden Tag um **${params.time}** (${params.timezone}) aktualisiert.`,
+      leaderboardTimeInvalid: (params: { time: string }) =>
+        `❌ **${params.time}** ist keine gültige Uhrzeit. Nutze das Format HH:MM, z. B. 18:00 oder 09:30.`,
+    },
   },
 } satisfies Translations;

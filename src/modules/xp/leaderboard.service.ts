@@ -9,7 +9,7 @@ import { isLeaderboardDue } from './leaderboard.schedule.js';
 import { xpModule } from './xp.definition.js';
 import { XpService } from './xp.service.js';
 import { renderLeaderboard } from './leaderboard.render.js';
-import { xpTranslations } from './i18n/index.js';
+import { translations } from '../../core/i18n/translations/index.js';
 
 @Injectable()
 export class LeaderboardService {
@@ -76,7 +76,7 @@ export class LeaderboardService {
 
     const locale = await this.i18n.getGuildLocale(guildId);
     const updated = Math.floor(Date.now() / 1000);
-    const content = `${renderLeaderboard(entries, locale)}\n\n${xpTranslations[locale].leaderboardUpdated({ time: `<t:${updated}:R>` })}`;
+    const content = `${renderLeaderboard(entries, locale)}\n\n${translations[locale].xp.leaderboardUpdated({ time: `<t:${updated}:R>` })}`;
 
     const channel = await this.client.channels
       .fetch(channelId)
