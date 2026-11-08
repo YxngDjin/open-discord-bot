@@ -11,6 +11,8 @@ export const xpSettingsSchema = z.object({
   levelRoles: z
     .array(z.object({ level: z.number().int().min(1), roleId: z.string() }))
     .default([]),
+  leaderboardChannelId: z.string().optional(),
+  leaderboardTime: z.iso.time({ precision: -1 }).default('18:00'),
 });
 
 export type XpSettings = z.infer<typeof xpSettingsSchema>;

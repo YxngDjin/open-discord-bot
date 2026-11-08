@@ -4,9 +4,9 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
-  moduleFormat = "esm"
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
   importFileExtension = "js"
 }
 
@@ -15,17 +15,19 @@ datasource db {
 }
 
 model Guild {
-  id                String             @id
-  locale            String             @default("en")
-  leftAt            DateTime?          @map("left_at")
-  createdAt         DateTime           @default(now()) @map("created_at")
-  updatedAt         DateTime           @updatedAt @map("updated_at")
-  guildModule       GuildModule[]
-  moderationCases   ModerationCase[]
-  moderationCounter ModerationCounter?
-  memberXp          MemberXp[]
-  selfRolePanels    SelfRolePanel[]
-  tempVoiceChannel  TempVoiceChannel[]
+  id                 String              @id
+  locale             String              @default("en")
+  leftAt             DateTime?           @map("left_at")
+  timezone           String              @default("UTC")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @updatedAt @map("updated_at")
+  guildModule        GuildModule[]
+  moderationCases    ModerationCase[]
+  moderationCounter  ModerationCounter?
+  memberXp           MemberXp[]
+  selfRolePanels     SelfRolePanel[]
+  tempVoiceChannel   TempVoiceChannel[]
+  leaderboardMessage LeaderboardMessage?
 
   @@map("guilds")
 }
@@ -137,4 +139,15 @@ model TempVoiceChannel {
 
   @@index([guildId])
   @@map("temp_voice_channels")
+}
+
+model LeaderboardMessage {
+  guildId      String   @id @map("guild_id")
+  guild        Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  channelId    String   @map("channel_id")
+  messageId    String   @map("message_id")
+  lastPostedOn String   @map("last_posted_on")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("leaderboard_messages")
 }

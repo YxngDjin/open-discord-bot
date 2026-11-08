@@ -12,7 +12,6 @@ import {
   Subcommand,
 } from 'necord';
 import { resolveLocale } from '../../core/i18n/locales.js';
-import { moderationTranslations } from './i18n/index.js';
 import { ModerationService } from './moderation.service.js';
 import {
   BanDto,
@@ -22,13 +21,14 @@ import {
   UnbanDto,
   WarnDto,
 } from './dto/dto.js';
+import { describeCommand } from '../../core/i18n/localize.js';
+import { translations } from '../../core/i18n/translations/index.js';
 
 type Interaction = SlashCommandContext[0];
 
 export const ModerationCommandsDecorator = createCommandGroupDecorator({
   name: 'mod',
-  description: 'Moderation commands',
-  descriptionLocalizations: { de: 'Moderationsbefehle' },
+  ...describeCommand((t) => t.moderation.commands.group),
   contexts: [InteractionContextType.Guild],
   defaultMemberPermissions: [PermissionFlagsBits.ModerateMembers],
 });
@@ -39,13 +39,12 @@ export class ModerationCommands {
   constructor(private readonly moderation: ModerationService) {}
 
   private translate(interaction: Interaction) {
-    return moderationTranslations[resolveLocale(interaction.locale)];
+    return translations[resolveLocale(interaction.locale)].moderation;
   }
 
   @Subcommand({
     name: 'warn',
-    description: 'Warn a member',
-    descriptionLocalizations: { de: 'Mitglied verwarnen' },
+    ...describeCommand((t) => t.moderation.commands.warn),
   })
   public async onWarn(
     @Context() [interaction]: SlashCommandContext,
@@ -85,8 +84,7 @@ export class ModerationCommands {
 
   @Subcommand({
     name: 'cases',
-    description: 'Show the cases of a user',
-    descriptionLocalizations: { de: 'Fälle eines Nutzers anzeigen' },
+    ...describeCommand((t) => t.moderation.commands.cases),
   })
   public async onCases(
     @Context() [interaction]: SlashCommandContext,
@@ -123,8 +121,7 @@ export class ModerationCommands {
 
   @Subcommand({
     name: 'timeout',
-    description: 'Timeout a member',
-    descriptionLocalizations: { de: 'Mitglied stummschalten' },
+    ...describeCommand((t) => t.moderation.commands.timeout),
   })
   public async onTimeout(
     @Context() [interaction]: SlashCommandContext,
@@ -184,8 +181,7 @@ export class ModerationCommands {
 
   @Subcommand({
     name: 'kick',
-    description: 'Kick a member',
-    descriptionLocalizations: { de: 'Mitglied kicken' },
+    ...describeCommand((t) => t.moderation.commands.kick),
   })
   public async onKick(
     @Context() [interaction]: SlashCommandContext,
@@ -243,8 +239,7 @@ export class ModerationCommands {
 
   @Subcommand({
     name: 'ban',
-    description: 'Ban a user',
-    descriptionLocalizations: { de: 'Nutzer bannen' },
+    ...describeCommand((t) => t.moderation.commands.ban),
   })
   public async onBan(
     @Context() [interaction]: SlashCommandContext,
@@ -306,8 +301,7 @@ export class ModerationCommands {
 
   @Subcommand({
     name: 'unban',
-    description: 'Unban a user',
-    descriptionLocalizations: { de: 'Nutzer entbannen' },
+    ...describeCommand((t) => t.moderation.commands.unban),
   })
   public async onUnban(
     @Context() [interaction]: SlashCommandContext,

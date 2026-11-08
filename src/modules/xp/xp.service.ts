@@ -8,10 +8,10 @@ import {
   type Message,
 } from 'discord.js';
 import { I18nService } from '../../core/i18n/i18n.service.js';
-import { xpTranslations } from './i18n/index.js';
 import { xpModule, type XpSettings } from './xp.definition.js';
 import { levelFromXp, progressInLevel } from './xp.formula.js';
 import { Interval } from '@nestjs/schedule';
+import { translations } from '../../core/i18n/translations/index.js';
 
 @Injectable()
 export class XpService {
@@ -145,7 +145,7 @@ export class XpService {
 
         if (channel?.isTextBased()) {
           const locale = await this.i18n.getGuildLocale(member.guild.id);
-          const t = xpTranslations[locale];
+          const t = translations[locale].xp;
 
           await channel.send({
             content: t.levelUp({ user: member.toString(), level: newLevel }),

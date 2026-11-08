@@ -1,11 +1,11 @@
 import { ChannelType, type GuildBasedChannel, type Role } from 'discord.js';
 import { ChannelOption, IntegerOption, RoleOption, StringOption } from 'necord';
 import type { SelfRoleMode } from '../../../generated/prisma/enums.js';
+import { describeName, describeOption } from '../../../core/i18n/localize.js';
 
 const panelOption = {
   name: 'panel',
-  description: 'ID of the panel (see /self-role list)',
-  description_localizations: { de: 'ID des Panels (siehe /self-role list)' },
+  ...describeOption((t) => t.selfRoles.options.panel),
   required: true,
   min_value: 1,
 };
@@ -13,10 +13,7 @@ const panelOption = {
 export class CreateDto {
   @ChannelOption({
     name: 'channel',
-    description: 'Channel where the panel will be posted',
-    description_localizations: {
-      de: 'Channel, in dem das Panel gepostet wird',
-    },
+    ...describeOption((t) => t.selfRoles.options.channel),
     required: true,
     channel_types: [ChannelType.GuildText, ChannelType.GuildAnnouncement],
   })
@@ -24,8 +21,7 @@ export class CreateDto {
 
   @StringOption({
     name: 'title',
-    description: 'Title of the panel',
-    description_localizations: { de: 'Titel des Panels' },
+    ...describeOption((t) => t.selfRoles.options.title),
     required: true,
     max_length: 256,
   })
@@ -33,8 +29,7 @@ export class CreateDto {
 
   @StringOption({
     name: 'description',
-    description: 'Text below the title',
-    description_localizations: { de: 'Text unter dem Titel' },
+    ...describeOption((t) => t.selfRoles.options.description),
     required: false,
     max_length: 1000,
   })
@@ -42,20 +37,15 @@ export class CreateDto {
 
   @StringOption({
     name: 'mode',
-    description: 'Buttons or a select menu (default: buttons)',
-    description_localizations: {
-      de: 'Buttons oder ein Auswahlmenü (Standard: Buttons)',
-    },
+    ...describeOption((t) => t.selfRoles.options.mode),
     required: false,
     choices: [
       {
-        name: 'Buttons',
-        name_localizations: { de: 'Buttons' },
+        ...describeName((t) => t.selfRoles.admin.list.modes.BUTTONS),
         value: 'BUTTONS',
       },
       {
-        name: 'Select menu',
-        name_localizations: { de: 'Auswahlmenü' },
+        ...describeName((t) => t.selfRoles.admin.list.modes.SELECT),
         value: 'SELECT',
       },
     ],
@@ -75,18 +65,14 @@ export class AddRoleDto {
 
   @RoleOption({
     name: 'role',
-    description: 'The role to add',
-    description_localizations: { de: 'Die Rolle, die hinzugefügt wird' },
+    ...describeOption((t) => t.selfRoles.options.addRole),
     required: true,
   })
   role: Role;
 
   @StringOption({
     name: 'label',
-    description: 'Text on the button (default: role name)',
-    description_localizations: {
-      de: 'Text auf dem Button (Standard: Rollenname)',
-    },
+    ...describeOption((t) => t.selfRoles.options.label),
     required: false,
     max_length: 80,
   })
@@ -94,8 +80,7 @@ export class AddRoleDto {
 
   @StringOption({
     name: 'emoji',
-    description: 'Emoji next to the text, e.g. 🎮',
-    description_localizations: { de: 'Emoji neben dem Text, z. B. 🎮' },
+    ...describeOption((t) => t.selfRoles.options.emoji),
     required: false,
   })
   emoji?: string;
@@ -107,8 +92,7 @@ export class RemoveRoleDto {
 
   @RoleOption({
     name: 'role',
-    description: 'The role to remove',
-    description_localizations: { de: 'Die Rolle, die entfernt wird' },
+    ...describeOption((t) => t.selfRoles.options.removeRole),
     required: true,
   })
   role: Role;
