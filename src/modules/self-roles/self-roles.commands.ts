@@ -14,9 +14,10 @@ import {
   Subcommand,
 } from 'necord';
 import { resolveLocale } from '../../core/i18n/locales.js';
-import { selfRolesTranslations } from './i18n/index.js';
 import { MAX_OPTIONS, SelfRolesService } from './self-roles.service.js';
 import { AddRoleDto, CreateDto, PanelDto, RemoveRoleDto } from './dto/dto.js';
+import { describeCommand } from '../../core/i18n/localize.js';
+import { translations } from '../../core/i18n/translations/index.js';
 
 type Interaction = SlashCommandContext[0];
 
@@ -25,8 +26,7 @@ const EMBED_DESCRIPTION_LIMIT = 4096;
 
 export const SelfRolesCommandsDecorator = createCommandGroupDecorator({
   name: 'self-role',
-  description: 'Manage self role panels',
-  descriptionLocalizations: { de: 'Selbstrollen-Panels verwalten' },
+  ...describeCommand((t) => t.selfRoles.commands.group),
   contexts: [InteractionContextType.Guild],
   defaultMemberPermissions: [PermissionFlagsBits.ManageGuild],
 });
@@ -37,7 +37,7 @@ export class SelfRolesCommands {
   constructor(private readonly selfRolesService: SelfRolesService) {}
 
   private translate(interaction: Interaction) {
-    return selfRolesTranslations[resolveLocale(interaction.locale)].admin;
+    return translations[resolveLocale(interaction.locale)].selfRoles.admin;
   }
 
   /** Every answer of /self-role is only visible to the admin. */
@@ -73,8 +73,7 @@ export class SelfRolesCommands {
 
   @Subcommand({
     name: 'create',
-    description: 'Create a new self role panel',
-    descriptionLocalizations: { de: 'Ein neues Selbstrollen-Panel erstellen' },
+    ...describeCommand((t) => t.selfRoles.commands.create),
   })
   async onCreate(
     @Context() [interaction]: SlashCommandContext,
@@ -97,8 +96,7 @@ export class SelfRolesCommands {
 
   @Subcommand({
     name: 'add-role',
-    description: 'Add a role to a panel',
-    descriptionLocalizations: { de: 'Eine Rolle zu einem Panel hinzufügen' },
+    ...describeCommand((t) => t.selfRoles.commands.addRole),
   })
   async onAddRole(
     @Context() [interaction]: SlashCommandContext,
@@ -147,8 +145,7 @@ export class SelfRolesCommands {
 
   @Subcommand({
     name: 'remove-role',
-    description: 'Remove a role from a panel',
-    descriptionLocalizations: { de: 'Eine Rolle aus einem Panel entfernen' },
+    ...describeCommand((t) => t.selfRoles.commands.removeRole),
   })
   async onRemoveRole(
     @Context() [interaction]: SlashCommandContext,
@@ -178,10 +175,7 @@ export class SelfRolesCommands {
 
   @Subcommand({
     name: 'publish',
-    description: 'Post a panel or update the posted message',
-    descriptionLocalizations: {
-      de: 'Ein Panel posten oder die gepostete Nachricht aktualisieren',
-    },
+    ...describeCommand((t) => t.selfRoles.commands.publish),
   })
   async onPublish(
     @Context() [interaction]: SlashCommandContext,
@@ -205,8 +199,7 @@ export class SelfRolesCommands {
 
   @Subcommand({
     name: 'list',
-    description: 'Show all panels of this server',
-    descriptionLocalizations: { de: 'Alle Panels dieses Servers anzeigen' },
+    ...describeCommand((t) => t.selfRoles.commands.list),
   })
   async onList(@Context() [interaction]: SlashCommandContext) {
     const t = this.translate(interaction).list;
@@ -240,10 +233,7 @@ export class SelfRolesCommands {
 
   @Subcommand({
     name: 'delete',
-    description: 'Delete a panel and its posted message',
-    descriptionLocalizations: {
-      de: 'Ein Panel und seine gepostete Nachricht löschen',
-    },
+    ...describeCommand((t) => t.selfRoles.commands.delete),
   })
   async onDelete(
     @Context() [interaction]: SlashCommandContext,

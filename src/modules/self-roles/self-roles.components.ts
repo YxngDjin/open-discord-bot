@@ -10,8 +10,8 @@ import {
   type StringSelectContext,
 } from 'necord';
 import { resolveLocale } from '../../core/i18n/locales.js';
-import { selfRolesTranslations } from './i18n/index.js';
 import { SelfRolesService } from './self-roles.service.js';
+import { translations } from '../../core/i18n/translations/index.js';
 
 @Injectable()
 export class SelfRolesComponents {
@@ -31,7 +31,7 @@ export class SelfRolesComponents {
     const result = await this.selfRolesService.toggleRole(member, id, roleId);
 
     // Answers go only to the clicking member, so use their Discord language.
-    const t = selfRolesTranslations[resolveLocale(interaction.locale)].clicks;
+    const t = translations[resolveLocale(interaction.locale)].selfRoles.clicks;
 
     return interaction.reply({
       content: t[result]({ role: `<@&${roleId}>` }),
@@ -54,7 +54,7 @@ export class SelfRolesComponents {
     );
 
     // Answers go only to the clicking member, so use their Discord language.
-    const t = selfRolesTranslations[resolveLocale(interaction.locale)].sync;
+    const t = translations[resolveLocale(interaction.locale)].selfRoles.sync;
 
     return interaction.reply({
       content: t[result],

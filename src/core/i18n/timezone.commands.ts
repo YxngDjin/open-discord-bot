@@ -16,7 +16,8 @@ import {
 import { I18nService } from './i18n.service.js';
 import { resolveLocale } from './locales.js';
 import { isValidTimezone, TIMEZONES } from './timezone.js';
-import { languageCommandsTranslations } from './translations/index.js';
+import { translations } from './translations/index.js';
+import { describeCommand, describeOption } from './localize.js';
 
 /** Discord shows at most 25 suggestions. */
 const MAX_SUGGESTIONS = 25;
@@ -48,10 +49,7 @@ export class TimezoneAutocompleteInterceptor extends AutocompleteInterceptor {
 export class TimezoneDto {
   @StringOption({
     name: 'timezone',
-    description: "The server's time zone, e.g. Europe/Berlin",
-    description_localizations: {
-      de: 'Die Zeitzone des Servers, z. B. Europe/Berlin',
-    },
+    ...describeOption((t) => t.timezone.options.timezone),
     required: false,
     // No choices: there are over 400 time zones, Discord allows only 25.
     // The suggestions come from TimezoneAutocompleteInterceptor instead.
@@ -67,10 +65,7 @@ export class TimezoneCommands {
   @UseInterceptors(TimezoneAutocompleteInterceptor)
   @SlashCommand({
     name: 'timezone',
-    description: 'Show or change the time zone of the server',
-    descriptionLocalizations: {
-      de: 'Zeige oder ändere die Zeitzone des Servers',
-    },
+    ...describeCommand((t) => t.timezone.commands.timezone),
     defaultMemberPermissions: [PermissionFlagsBits.ManageGuild],
     contexts: [InteractionContextType.Guild],
   })
@@ -78,14 +73,14 @@ export class TimezoneCommands {
     @Context() [interaction]: SlashCommandContext,
     @Options() { timezone }: TimezoneDto,
   ) {
-    const t = languageCommandsTranslations[resolveLocale(interaction.locale)];
+    const t = translations[resolveLocale(interaction.locale)].timezone;
     const guildId = interaction.guildId!;
 
     // No option: show the current time zone
     if (!timezone) {
       const current = await this.i18n.getGuildTimezone(guildId);
       return interaction.reply({
-        content: t.timezoneCurrent({
+        content: t.current({
           timezone: current,
           time: timeIn(current),
         }),
@@ -96,7 +91,7 @@ export class TimezoneCommands {
     // Autocomplete only suggests. Admins can still type anything.
     if (!isValidTimezone(timezone)) {
       return interaction.reply({
-        content: t.timezoneInvalid({ timezone }),
+        content: t.invalid({ timezone }),
         flags: MessageFlags.Ephemeral,
         allowedMentions: { parse: [] },
       });
@@ -104,7 +99,7 @@ export class TimezoneCommands {
 
     await this.i18n.setGuildTimezone(guildId, timezone);
     return interaction.reply({
-      content: t.timezoneChanged({ timezone, time: timeIn(timezone) }),
+      content: t.changed({ timezone, time: timeIn(timezone) }),
       flags: MessageFlags.Ephemeral,
     });
   }

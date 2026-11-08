@@ -1,167 +1,41 @@
 import { Injectable } from '@nestjs/common';
 import {
-  ChannelType,
-  type GuildBasedChannel,
   InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
-  type Role,
 } from 'discord.js';
 import {
-  BooleanOption,
-  ChannelOption,
   Context,
   createCommandGroupDecorator,
-  IntegerOption,
   Options,
-  RoleOption,
   type SlashCommandContext,
-  StringOption,
   Subcommand,
 } from 'necord';
 import { I18nService } from '../../core/i18n/i18n.service.js';
 import { resolveLocale } from '../../core/i18n/locales.js';
 import { ModuleSettingsService } from '../../core/module-registry/module-settings.service.js';
-import { xpTranslations } from './i18n/index.js';
 import { xpModule, xpSettingsSchema } from './xp.definition.js';
+import { describeCommand } from '../../core/i18n/localize.js';
+import { translations } from '../../core/i18n/translations/index.js';
+import {
+  XpAmountDto,
+  XpCooldownDto,
+  XpIgnoreChannelDto,
+  XpLeaderboardChannelDto,
+  XpLeaderboardTimeDto,
+  XpLevelUpDto,
+  XpRoleAddDto,
+  XpRoleRemoveDto,
+} from './dto/dto.js';
 
 type Interaction = SlashCommandContext[0];
 
 export const XpSettingsCommandsDecorator = createCommandGroupDecorator({
   name: 'xp',
-  description: 'Configure the XP and level system',
-  descriptionLocalizations: { de: 'XP- und Level-System einstellen' },
+  ...describeCommand((t) => t.xp.commands.settings.group),
   defaultMemberPermissions: [PermissionFlagsBits.ManageGuild],
   contexts: [InteractionContextType.Guild],
 });
-
-export class XpAmountDto {
-  @IntegerOption({
-    name: 'amount',
-    description: 'Amount of XP (0 = off)',
-    description_localizations: { de: 'Menge an XP (0 = aus)' },
-    required: true,
-    min_value: 0,
-    max_value: 100,
-  })
-  amount: number;
-}
-
-export class XpCooldownDto {
-  @IntegerOption({
-    name: 'seconds',
-    description: 'Seconds before a message gives XP again (0-3600)',
-    description_localizations: {
-      de: 'Sekunden, bis eine Nachricht wieder XP bringt (0-3600)',
-    },
-    required: true,
-    min_value: 0,
-    max_value: 3600,
-  })
-  seconds: number;
-}
-
-export class XpIgnoreChannelDto {
-  @ChannelOption({
-    name: 'channel',
-    description: 'Channel to ignore or stop ignoring',
-    description_localizations: {
-      de: 'Channel, der ignoriert bzw. nicht mehr ignoriert werden soll',
-    },
-    required: true,
-    channel_types: [
-      ChannelType.GuildText,
-      ChannelType.GuildAnnouncement,
-      ChannelType.GuildVoice,
-      ChannelType.GuildStageVoice,
-    ],
-  })
-  channel: GuildBasedChannel;
-}
-
-export class XpLevelUpDto {
-  @BooleanOption({
-    name: 'enabled',
-    description: 'Send a message when someone levels up',
-    description_localizations: {
-      de: 'Nachricht senden, wenn jemand ein Level aufsteigt',
-    },
-    required: true,
-  })
-  enabled: boolean;
-
-  @ChannelOption({
-    name: 'channel',
-    description: 'Where to send it (empty = same channel as the message)',
-    description_localizations: {
-      de: 'Wohin (leer = derselbe Channel wie die Nachricht)',
-    },
-    required: false,
-    channel_types: [ChannelType.GuildText, ChannelType.GuildAnnouncement],
-  })
-  channel?: GuildBasedChannel;
-}
-
-export class XpRoleAddDto {
-  @IntegerOption({
-    name: 'level',
-    description: 'Level at which the role is given',
-    description_localizations: { de: 'Level, ab dem die Rolle vergeben wird' },
-    required: true,
-    min_value: 1,
-    max_value: 1000,
-  })
-  level: number;
-
-  @RoleOption({
-    name: 'role',
-    description: 'The role to give',
-    description_localizations: { de: 'Die Rolle, die vergeben werden soll' },
-    required: true,
-  })
-  role: Role;
-}
-
-export class XpRoleRemoveDto {
-  @IntegerOption({
-    name: 'level',
-    description: 'Level whose role should be removed',
-    description_localizations: {
-      de: 'Level, dessen Rolle entfernt werden soll',
-    },
-    required: true,
-    min_value: 1,
-    max_value: 1000,
-  })
-  level: number;
-}
-
-export class XpLeaderboardChannelDto {
-  @ChannelOption({
-    name: 'channel',
-    description: 'Channel for the daily leaderboard (empty = turn off)',
-    description_localizations: {
-      de: 'Channel für die tägliche Bestenliste (leer = ausschalten)',
-    },
-    required: false,
-    channel_types: [ChannelType.GuildText, ChannelType.GuildAnnouncement],
-  })
-  channel?: GuildBasedChannel;
-}
-
-export class XpLeaderboardTimeDto {
-  @StringOption({
-    name: 'time',
-    description: 'Time in the server time zone, e.g. 18:00',
-    description_localizations: {
-      de: 'Uhrzeit in der Zeitzone des Servers, z. B. 18:00',
-    },
-    required: true,
-    min_length: 5,
-    max_length: 5,
-  })
-  time: string;
-}
 
 @Injectable()
 @XpSettingsCommandsDecorator()
@@ -172,13 +46,12 @@ export class XpSettingsCommands {
   ) {}
 
   private translate(interaction: Interaction) {
-    return xpTranslations[resolveLocale(interaction.locale)].admin;
+    return translations[resolveLocale(interaction.locale)].xp.admin;
   }
 
   @Subcommand({
     name: 'show',
-    description: 'Show the current XP settings',
-    descriptionLocalizations: { de: 'Zeige die aktuellen XP-Einstellungen' },
+    ...describeCommand((t) => t.xp.commands.settings.show),
   })
   public async onShow(@Context() [interaction]: SlashCommandContext) {
     const t = this.translate(interaction).show;
@@ -229,8 +102,7 @@ export class XpSettingsCommands {
 
   @Subcommand({
     name: 'message-xp',
-    description: 'Set the XP per message',
-    descriptionLocalizations: { de: 'Setze die XP pro Nachricht' },
+    ...describeCommand((t) => t.xp.commands.settings.messageXp),
   })
   public async onMessageXp(
     @Context() [interaction]: SlashCommandContext,
@@ -248,10 +120,7 @@ export class XpSettingsCommands {
 
   @Subcommand({
     name: 'cooldown',
-    description: 'Set the cooldown between XP for messages',
-    descriptionLocalizations: {
-      de: 'Setze den Cooldown zwischen XP für Nachrichten',
-    },
+    ...describeCommand((t) => t.xp.commands.settings.cooldown),
   })
   public async onCooldown(
     @Context() [interaction]: SlashCommandContext,
@@ -269,10 +138,7 @@ export class XpSettingsCommands {
 
   @Subcommand({
     name: 'voice-xp',
-    description: 'Set the XP per minute in voice channels',
-    descriptionLocalizations: {
-      de: 'Setze die XP pro Minute in Voice-Channels',
-    },
+    ...describeCommand((t) => t.xp.commands.settings.voiceXp),
   })
   public async onVoiceXp(
     @Context() [interaction]: SlashCommandContext,
@@ -290,10 +156,7 @@ export class XpSettingsCommands {
 
   @Subcommand({
     name: 'ignore-channel',
-    description: 'Ignore a channel for XP, or stop ignoring it',
-    descriptionLocalizations: {
-      de: 'Channel für XP ignorieren oder nicht mehr ignorieren',
-    },
+    ...describeCommand((t) => t.xp.commands.settings.ignoreChannel),
   })
   public async onIgnoreChannel(
     @Context() [interaction]: SlashCommandContext,
@@ -321,10 +184,7 @@ export class XpSettingsCommands {
 
   @Subcommand({
     name: 'levelup',
-    description: 'Enable or disable level-up messages',
-    descriptionLocalizations: {
-      de: 'Level-Up-Nachrichten aktivieren oder deaktivieren',
-    },
+    ...describeCommand((t) => t.xp.commands.settings.levelup),
   })
   public async onLevelUp(
     @Context() [interaction]: SlashCommandContext,
@@ -347,10 +207,7 @@ export class XpSettingsCommands {
 
   @Subcommand({
     name: 'role-add',
-    description: 'Give a role when members reach a level',
-    descriptionLocalizations: {
-      de: 'Rolle vergeben, wenn Mitglieder ein Level erreichen',
-    },
+    ...describeCommand((t) => t.xp.commands.settings.roleAdd),
   })
   public async onRoleAdd(
     @Context() [interaction]: SlashCommandContext,
@@ -385,8 +242,7 @@ export class XpSettingsCommands {
 
   @Subcommand({
     name: 'role-remove',
-    description: 'Remove the role for a level',
-    descriptionLocalizations: { de: 'Rolle für ein Level entfernen' },
+    ...describeCommand((t) => t.xp.commands.settings.roleRemove),
   })
   public async onRoleRemove(
     @Context() [interaction]: SlashCommandContext,
@@ -415,10 +271,7 @@ export class XpSettingsCommands {
 
   @Subcommand({
     name: 'leaderboard-channel',
-    description: 'Set or remove the channel for the daily leaderboard',
-    descriptionLocalizations: {
-      de: 'Channel für die tägliche Bestenliste setzen oder entfernen',
-    },
+    ...describeCommand((t) => t.xp.commands.settings.leaderboardChannel),
   })
   public async onLeaderboardChannel(
     @Context() [interaction]: SlashCommandContext,
@@ -465,10 +318,7 @@ export class XpSettingsCommands {
 
   @Subcommand({
     name: 'leaderboard-time',
-    description: 'Set the time of the daily leaderboard',
-    descriptionLocalizations: {
-      de: 'Uhrzeit der täglichen Bestenliste festlegen',
-    },
+    ...describeCommand((t) => t.xp.commands.settings.leaderboardTime),
   })
   public async onLeaderboardTime(
     @Context() [interaction]: SlashCommandContext,

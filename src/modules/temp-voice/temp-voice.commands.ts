@@ -13,7 +13,6 @@ import {
 } from 'necord';
 import { resolveLocale } from '../../core/i18n/locales.js';
 import { ModuleSettingsService } from '../../core/module-registry/module-settings.service.js';
-import { tempVoiceTranslations } from './i18n/index.js';
 import { tempVoiceModule } from './temp-voice.definition.js';
 import {
   TempVoiceCategoryDto,
@@ -22,13 +21,14 @@ import {
   TempVoiceLimitDto,
   TempVoiceNameDto,
 } from './dto/dto.js';
+import { describeCommand } from '../../core/i18n/localize.js';
+import { translations } from '../../core/i18n/translations/index.js';
 
 type Interaction = SlashCommandContext[0];
 
 export const TempVoiceCommandsDecorator = createCommandGroupDecorator({
   name: 'tempvoice',
-  description: 'Configure temporary voice channels',
-  descriptionLocalizations: { de: 'Temporäre Voice-Channels einstellen' },
+  ...describeCommand((t) => t.tempVoice.commands.tempvoice.group),
   defaultMemberPermissions: [PermissionFlagsBits.ManageGuild],
   contexts: [InteractionContextType.Guild],
 });
@@ -39,7 +39,7 @@ export class TempVoiceCommands {
   constructor(private readonly settings: ModuleSettingsService) {}
 
   private translate(interaction: Interaction) {
-    return tempVoiceTranslations[resolveLocale(interaction.locale)].admin;
+    return translations[resolveLocale(interaction.locale)].tempVoice.admin;
   }
 
   /** Every answer of /tempvoice is only visible to the admin. */
@@ -53,8 +53,7 @@ export class TempVoiceCommands {
 
   @Subcommand({
     name: 'show',
-    description: 'Show the current settings',
-    descriptionLocalizations: { de: 'Zeige die aktuellen Einstellungen' },
+    ...describeCommand((t) => t.tempVoice.commands.tempvoice.show),
   })
   public async onShow(@Context() [interaction]: SlashCommandContext) {
     const t = this.translate(interaction).show;
@@ -77,10 +76,7 @@ export class TempVoiceCommands {
 
   @Subcommand({
     name: 'channel',
-    description: 'Set or remove the join-to-create channel',
-    descriptionLocalizations: {
-      de: 'Beitreten-zum-Erstellen-Channel setzen oder entfernen',
-    },
+    ...describeCommand((t) => t.tempVoice.commands.tempvoice.channel),
   })
   public async onChannel(
     @Context() [interaction]: SlashCommandContext,
@@ -110,10 +106,7 @@ export class TempVoiceCommands {
 
   @Subcommand({
     name: 'category',
-    description: 'Set or remove the category for new channels',
-    descriptionLocalizations: {
-      de: 'Kategorie für neue Channels setzen oder entfernen',
-    },
+    ...describeCommand((t) => t.tempVoice.commands.tempvoice.category),
   })
   public async onCategory(
     @Context() [interaction]: SlashCommandContext,
@@ -134,8 +127,7 @@ export class TempVoiceCommands {
 
   @Subcommand({
     name: 'name',
-    description: 'Set the name of new channels',
-    descriptionLocalizations: { de: 'Namen neuer Channels festlegen' },
+    ...describeCommand((t) => t.tempVoice.commands.tempvoice.name),
   })
   public async onName(
     @Context() [interaction]: SlashCommandContext,
@@ -157,8 +149,7 @@ export class TempVoiceCommands {
 
   @Subcommand({
     name: 'limit',
-    description: 'Set the user limit of new channels',
-    descriptionLocalizations: { de: 'Nutzerlimit neuer Channels festlegen' },
+    ...describeCommand((t) => t.tempVoice.commands.tempvoice.limit),
   })
   public async onLimit(
     @Context() [interaction]: SlashCommandContext,
@@ -174,10 +165,7 @@ export class TempVoiceCommands {
 
   @Subcommand({
     name: 'delete-after',
-    description: 'Set how long an empty channel is kept',
-    descriptionLocalizations: {
-      de: 'Festlegen, wie lange ein leerer Channel bleibt',
-    },
+    ...describeCommand((t) => t.tempVoice.commands.tempvoice.deleteAfter),
   })
   public async onDeleteAfter(
     @Context() [interaction]: SlashCommandContext,

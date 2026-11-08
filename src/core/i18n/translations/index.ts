@@ -1,8 +1,11 @@
 import type { SupportedLocale } from '../locales.js';
 import { de } from './de.js';
-import { en, type LanguageCommandTranslations } from './en.js';
+import { en, type Translations } from './en.js';
 
-export const languageCommandsTranslations = {
+export type { Translations };
+
+/** All texts of the bot, one entry per language. */
+export const translations = {
   en,
   de,
-} satisfies Record<SupportedLocale, LanguageCommandTranslations>;
+} satisfies Record<SupportedLocale, Translations>;

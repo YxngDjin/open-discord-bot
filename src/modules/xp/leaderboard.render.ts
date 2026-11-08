@@ -1,12 +1,12 @@
 import type { SupportedLocale } from '../../core/i18n/locales.js';
-import { xpTranslations } from './i18n/index.js';
+import { translations } from '../../core/i18n/translations/index.js';
 import { levelFromXp } from './xp.formula.js';
 
 export const renderLeaderboard = (
   entries: { userId: string; xp: number }[],
   locale: SupportedLocale,
 ): string => {
-  const t = xpTranslations[locale];
+  const t = translations[locale].xp;
 
   const lines = entries.map((entry, index) =>
     t.leaderboardLine({

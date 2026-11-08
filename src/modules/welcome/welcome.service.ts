@@ -3,8 +3,8 @@ import { GuildMember, PartialGuildMember } from 'discord.js';
 import { ModuleSettingsService } from '../../core/module-registry/module-settings.service.js';
 import { I18nService } from '../../core/i18n/i18n.service.js';
 import { welcomeModule } from './welcome.definition.js';
-import { welcomeModuleTranslations } from './i18n/index.js';
 import { renderTemplate, TemplateValues } from './welcome.template.js';
+import { translations } from '../../core/i18n/translations/index.js';
 
 type AnyMember = GuildMember | PartialGuildMember;
 
@@ -32,8 +32,7 @@ export class WelcomeService {
     );
 
     if (settings.channelId) {
-      const t =
-        welcomeModuleTranslations[await this.i18n.getGuildLocale(guildId)];
+      const t = translations[await this.i18n.getGuildLocale(guildId)].welcome;
       const text = renderTemplate(
         settings.message ?? t.defaultWelcome,
         this.getValues(member),
@@ -59,8 +58,7 @@ export class WelcomeService {
     );
     if (!settings.goodbyeEnabled || !settings.channelId) return;
 
-    const t =
-      welcomeModuleTranslations[await this.i18n.getGuildLocale(guildId)];
+    const t = translations[await this.i18n.getGuildLocale(guildId)].welcome;
     const text = renderTemplate(
       settings.goodbyeMessage ?? t.defaultGoodbye,
       this.getValues(member),

@@ -7,7 +7,7 @@ import {
 import { BaseInteraction, MessageFlags } from 'discord.js';
 import { NecordArgumentsHost } from 'necord';
 import { resolveLocale } from '../i18n/locales.js';
-import { errorFilterTranslations } from './i18n/index.js';
+import { translations } from '../i18n/translations/index.js';
 
 @Catch()
 export class DiscordExceptionFilter implements ExceptionFilter {
@@ -25,7 +25,7 @@ export class DiscordExceptionFilter implements ExceptionFilter {
     }
 
     const locale = resolveLocale(first.locale);
-    const content = errorFilterTranslations[locale].genericError;
+    const content = translations[locale].errors.generic;
     const options = { content, flags: MessageFlags.Ephemeral } as const;
 
     return (
