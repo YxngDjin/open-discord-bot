@@ -103,7 +103,6 @@ export class XpCommands {
       });
     }
 
-
     return interaction.reply({
       content: renderLeaderboard(entries, locale),
       allowedMentions: { parse: [] },

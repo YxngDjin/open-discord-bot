@@ -15,14 +15,12 @@ import {
 import { ModuleRegistryService } from './module-registry.service.js';
 import { ModuleSettingsService } from './module-settings.service.js';
 import { resolveLocale } from '../i18n/locales.js';
-import { moduleCommandsTranslations } from './i18n/index.js';
+import { describeCommand, describeOption } from '../i18n/localize.js';
+import { translations } from '../i18n/translations/index.js';
 
 export const ModuleCommandsDecorator = createCommandGroupDecorator({
   name: 'module',
-  description: "Manage the bot's modules on this server",
-  descriptionLocalizations: {
-    de: 'Verwalte die Module des Bots auf diesem Server',
-  },
+  ...describeCommand((t) => t.module.commands.module),
   defaultMemberPermissions: [PermissionFlagsBits.ManageGuild],
   contexts: [InteractionContextType.Guild],
 });
@@ -30,7 +28,7 @@ export const ModuleCommandsDecorator = createCommandGroupDecorator({
 export class ModuleKeyDto {
   @StringOption({
     name: 'module',
-    description: 'The module to enable or disable',
+    ...describeOption((t) => t.module.options.module),
     required: true,
   })
   module: string;
@@ -46,15 +44,12 @@ export class ModuleCommands {
 
   @Subcommand({
     name: 'list',
-    description: 'Show all modules and whether they are enabled',
-    descriptionLocalizations: {
-      de: 'Zeige alle Module und ob sie aktiviert sind',
-    },
+    ...describeCommand((t) => t.module.commands.list),
   })
   public async onList(@Context() [interaction]: SlashCommandContext) {
     const guildId = interaction.guildId!;
     const locale = resolveLocale(interaction.locale);
-    const t = moduleCommandsTranslations[locale];
+    const t = translations[locale];
 
     const lines = await Promise.all(
       this.registry.getAll().map(async (definition) => {
@@ -65,7 +60,7 @@ export class ModuleCommands {
 
     if (lines.length === 0) {
       return interaction.reply({
-        content: t.noModules,
+        content: t.module.noModules,
         flags: MessageFlags.Ephemeral,
       });
     }
@@ -78,55 +73,49 @@ export class ModuleCommands {
 
   @Subcommand({
     name: 'enable',
-    description: 'Enable a module on this server',
-    descriptionLocalizations: {
-      de: 'Aktiviere ein Modul auf diesem Server',
-    },
+    ...describeCommand((t) => t.module.commands.enable),
   })
   public async onEnable(
     @Context() [interaction]: SlashCommandContext,
     @Options() { module }: ModuleKeyDto,
   ) {
-    const locale = resolveLocale(interaction.locale!);
-    const t = moduleCommandsTranslations[locale];
+    const locale = resolveLocale(interaction.locale);
+    const t = translations[locale];
 
     const definition = this.registry.get(module);
     if (!definition) {
       return interaction.reply({
-        content: t.missingModule({ module }),
+        content: t.module.missingModule({ module }),
         flags: MessageFlags.Ephemeral,
       });
     }
     await this.settings.setEnabled(interaction.guildId!, module, true);
     return interaction.reply({
-      content: t.enabled({ module }),
+      content: t.module.enabled({ module }),
       flags: MessageFlags.Ephemeral,
     });
   }
 
   @Subcommand({
     name: 'disable',
-    description: 'Disable a module on this server',
-    descriptionLocalizations: {
-      de: 'Deaktiviere ein Modul auf diesem Server',
-    },
+    ...describeCommand((t) => t.module.commands.disable),
   })
   public async onDisable(
     @Context() [interaction]: SlashCommandContext,
     @Options() { module }: ModuleKeyDto,
   ) {
-    const locale = resolveLocale(interaction.locale!);
-    const t = moduleCommandsTranslations[locale];
+    const locale = resolveLocale(interaction.locale);
+    const t = translations[locale];
     const definition = this.registry.get(module);
     if (!definition) {
       return interaction.reply({
-        content: t.missingModule({ module }),
+        content: t.module.missingModule({ module }),
         flags: MessageFlags.Ephemeral,
       });
     }
     await this.settings.setEnabled(interaction.guildId!, module, false);
     return interaction.reply({
-      content: t.disabled({ module }),
+      content: t.module.disabled({ module }),
       flags: MessageFlags.Ephemeral,
     });
   }

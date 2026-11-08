@@ -14,12 +14,12 @@ import {
 import { I18nService } from './i18n.service.js';
 import { LOCALE_NAMES, resolveLocale, SUPPORTED_LOCALES } from './locales.js';
 import { translations } from './translations/index.js';
+import { describeCommand, describeOption } from './localize.js';
 
 export class LanguageDto {
   @StringOption({
     name: 'language',
-    description: 'The new server language',
-    description_localizations: { de: 'Die neue Server-Sprache' },
+    ...describeOption((t) => t.language.options.language),
     required: false,
     choices: SUPPORTED_LOCALES.map((locale) => ({
       name: LOCALE_NAMES[locale],
@@ -35,8 +35,7 @@ export class LanguageCommands {
 
   @SlashCommand({
     name: 'language',
-    description: 'Show or change the server language',
-    descriptionLocalizations: { de: 'Zeige oder ändere die Server-Sprache' },
+    ...describeCommand((t) => t.language.commands.language),
     defaultMemberPermissions: [PermissionFlagsBits.ManageGuild],
     contexts: [InteractionContextType.Guild],
   })

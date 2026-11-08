@@ -17,6 +17,7 @@ import { I18nService } from './i18n.service.js';
 import { resolveLocale } from './locales.js';
 import { isValidTimezone, TIMEZONES } from './timezone.js';
 import { translations } from './translations/index.js';
+import { describeCommand, describeOption } from './localize.js';
 
 /** Discord shows at most 25 suggestions. */
 const MAX_SUGGESTIONS = 25;
@@ -48,10 +49,7 @@ export class TimezoneAutocompleteInterceptor extends AutocompleteInterceptor {
 export class TimezoneDto {
   @StringOption({
     name: 'timezone',
-    description: "The server's time zone, e.g. Europe/Berlin",
-    description_localizations: {
-      de: 'Die Zeitzone des Servers, z. B. Europe/Berlin',
-    },
+    ...describeOption((t) => t.timezone.options.timezone),
     required: false,
     // No choices: there are over 400 time zones, Discord allows only 25.
     // The suggestions come from TimezoneAutocompleteInterceptor instead.
@@ -67,10 +65,7 @@ export class TimezoneCommands {
   @UseInterceptors(TimezoneAutocompleteInterceptor)
   @SlashCommand({
     name: 'timezone',
-    description: 'Show or change the time zone of the server',
-    descriptionLocalizations: {
-      de: 'Zeige oder ändere die Zeitzone des Servers',
-    },
+    ...describeCommand((t) => t.timezone.commands.timezone),
     defaultMemberPermissions: [PermissionFlagsBits.ManageGuild],
     contexts: [InteractionContextType.Guild],
   })
