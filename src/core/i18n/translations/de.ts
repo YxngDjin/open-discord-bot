@@ -448,4 +448,85 @@ export const de = {
         'Ich konnte deine Rollen nicht ändern. Bitte sag einem Server-Admin Bescheid.',
     },
   },
+
+  // Moderation module
+  moderation: {
+    commands: {
+      group: 'Moderationsbefehle',
+      warn: 'Mitglied verwarnen',
+      cases: 'Fälle eines Nutzers anzeigen',
+      timeout: 'Mitglied stummschalten',
+      kick: 'Mitglied kicken',
+      ban: 'Nutzer bannen',
+      unban: 'Nutzer entbannen',
+    },
+    // One group per subcommand, because "user" and "reason" differ per command
+    options: {
+      warn: {
+        user: 'Mitglied, das verwarnt werden soll',
+        reason: 'Grund der Verwarnung',
+      },
+      cases: {
+        user: 'Nutzer, dessen Fälle angezeigt werden sollen',
+      },
+      timeout: {
+        user: 'Mitglied, das stummgeschaltet werden soll',
+        minutes: 'Dauer des Timeouts in Minuten',
+        reason: 'Grund des Timeouts',
+      },
+      kick: {
+        user: 'Mitglied, das gekickt werden soll',
+        reason: 'Grund des Kicks',
+      },
+      ban: {
+        user: 'Nutzer, der gebannt werden soll (auch Nicht-Mitglieder)',
+        reason: 'Grund des Banns',
+        deleteDays: 'Nachrichten der letzten X Tage löschen',
+      },
+      unban: {
+        user: 'Nutzer, der entbannt werden soll (User-ID einfügen)',
+        reason: 'Grund der Entbannung',
+      },
+    },
+
+    moduleDisabled: 'Moderation ist auf diesem Server deaktiviert.',
+    memberNotFound: 'Dieser Nutzer ist kein Mitglied dieses Servers.',
+    cannotWarnSelfOrBot: 'Du kannst dich selbst oder einen Bot nicht verwarnen.',
+
+    targetErrors: {
+      self: 'Du kannst dich nicht selbst moderieren.',
+      owner: 'Du kannst den Server-Besitzer nicht moderieren.',
+      hierarchy:
+        'Du kannst nur Mitglieder unterhalb deiner höchsten Rolle moderieren.',
+      botCannot:
+        'Das kann ich nicht. Prüfe meine Berechtigungen und ob meine Rolle über diesem Mitglied steht.',
+      noPermission: 'Dazu hast du keine Berechtigung.',
+    },
+
+    caseTypes: {
+      WARN: 'Verwarnung',
+      TIMEOUT: 'Timeout',
+      KICK: 'Kick',
+      BAN: 'Bann',
+      UNBAN: 'Entbannung',
+    },
+
+    warned: (params: { user: string; caseNumber: number }) =>
+      `⚠️ **${params.user}** wurde verwarnt. (Fall #${params.caseNumber})`,
+    timedOut: (params: { user: string; minutes: number; caseNumber: number }) =>
+      `🔇 **${params.user}** wurde für ${params.minutes} Minute(n) stummgeschaltet. (Fall #${params.caseNumber})`,
+    kicked: (params: { user: string; caseNumber: number }) =>
+      `👢 **${params.user}** wurde gekickt. (Fall #${params.caseNumber})`,
+    banned: (params: { user: string; caseNumber: number }) =>
+      `🔨 **${params.user}** wurde gebannt. (Fall #${params.caseNumber})`,
+    unbanned: (params: { user: string; caseNumber: number }) =>
+      `✅ **${params.user}** wurde entbannt. (Fall #${params.caseNumber})`,
+    notBanned: (params: { user: string }) =>
+      `**${params.user}** ist nicht gebannt.`,
+
+    noCases: (params: { user: string }) => `Keine Fälle für **${params.user}**.`,
+    casesTitle: (params: { user: string }) => `**Fälle von ${params.user}:**`,
+    by: 'von',
+    noReason: 'kein Grund',
+  },
 } satisfies Translations;

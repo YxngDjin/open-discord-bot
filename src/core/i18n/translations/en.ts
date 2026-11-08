@@ -449,6 +449,85 @@ export const en = {
       failed: "I couldn't update your roles. Please tell a server admin.",
     } satisfies Record<SyncRolesResult, string>,
   },
+
+  // Moderation module
+  moderation: {
+    commands: {
+      group: 'Moderation commands',
+      warn: 'Warn a member',
+      cases: 'Show the cases of a user',
+      timeout: 'Timeout a member',
+      kick: 'Kick a member',
+      ban: 'Ban a user',
+      unban: 'Unban a user',
+    },
+    // One group per subcommand, because "user" and "reason" differ per command
+    options: {
+      warn: {
+        user: 'The member to warn',
+        reason: 'The reason for the warning',
+      },
+      cases: {
+        user: 'The user to show the cases of',
+      },
+      timeout: {
+        user: 'The member to timeout',
+        minutes: 'Duration of the timeout in minutes',
+        reason: 'The reason for the timeout',
+      },
+      kick: {
+        user: 'The member to kick',
+        reason: 'The reason for the kick',
+      },
+      ban: {
+        user: 'The user to ban (also works for non-members)',
+        reason: 'The reason for the ban',
+        deleteDays: 'Delete messages from the last X days',
+      },
+      unban: {
+        user: 'The user to unban (paste the user ID)',
+        reason: 'The reason for the unban',
+      },
+    },
+
+    moduleDisabled: 'Moderation is disabled on this server.',
+    memberNotFound: 'This user is not a member of this server.',
+    cannotWarnSelfOrBot: "You can't warn yourself or a bot.",
+
+    targetErrors: {
+      self: "You can't moderate yourself.",
+      owner: "You can't moderate the server owner.",
+      hierarchy: 'You can only moderate members below your highest role.',
+      botCannot:
+        "I can't do that. Check my permissions and make sure my role is above this member.",
+      noPermission: "You don't have permission to do that.",
+    },
+
+    caseTypes: {
+      WARN: 'Warning',
+      TIMEOUT: 'Timeout',
+      KICK: 'Kick',
+      BAN: 'Ban',
+      UNBAN: 'Unban',
+    } satisfies Record<CaseType, string>,
+
+    warned: (params: { user: string; caseNumber: number }) =>
+      `⚠️ **${params.user}** was warned. (Case #${params.caseNumber})`,
+    timedOut: (params: { user: string; minutes: number; caseNumber: number }) =>
+      `🔇 **${params.user}** was timed out for ${params.minutes} minute(s). (Case #${params.caseNumber})`,
+    kicked: (params: { user: string; caseNumber: number }) =>
+      `👢 **${params.user}** was kicked. (Case #${params.caseNumber})`,
+    banned: (params: { user: string; caseNumber: number }) =>
+      `🔨 **${params.user}** was banned. (Case #${params.caseNumber})`,
+    unbanned: (params: { user: string; caseNumber: number }) =>
+      `✅ **${params.user}** was unbanned. (Case #${params.caseNumber})`,
+    notBanned: (params: { user: string }) => `**${params.user}** is not banned.`,
+
+    noCases: (params: { user: string }) => `No cases for **${params.user}**.`,
+    casesTitle: (params: { user: string }) => `**Cases for ${params.user}:**`,
+    by: 'by',
+    noReason: 'no reason',
+  },
 };
 
 export type Translations = typeof en;

@@ -1,19 +1,18 @@
 import { type User } from 'discord.js';
 import { IntegerOption, StringOption, UserOption } from 'necord';
+import { describeOption } from '../../../core/i18n/localize.js';
 
 export class WarnDto {
   @UserOption({
     name: 'user',
-    description: 'The member to warn',
-    description_localizations: { de: 'Mitglied, das verwarnt werden soll' },
+    ...describeOption((t) => t.moderation.options.warn.user),
     required: true,
   })
   user: User;
 
   @StringOption({
     name: 'reason',
-    description: 'The reason for the warning',
-    description_localizations: { de: 'Grund der Verwarnung' },
+    ...describeOption((t) => t.moderation.options.warn.reason),
     required: false,
     max_length: 512,
   })
@@ -23,10 +22,7 @@ export class WarnDto {
 export class CasesDto {
   @UserOption({
     name: 'user',
-    description: 'The user to show the cases of',
-    description_localizations: {
-      de: 'Nutzer, dessen Fälle angezeigt werden sollen',
-    },
+    ...describeOption((t) => t.moderation.options.cases.user),
     required: true,
   })
   user: User;
@@ -35,18 +31,14 @@ export class CasesDto {
 export class TimeoutDto {
   @UserOption({
     name: 'user',
-    description: 'The member to timeout',
-    description_localizations: {
-      de: 'Mitglied, das stummgeschaltet werden soll',
-    },
+    ...describeOption((t) => t.moderation.options.timeout.user),
     required: true,
   })
   user: User;
 
   @IntegerOption({
     name: 'minutes',
-    description: 'Duration of the timeout in minutes',
-    description_localizations: { de: 'Dauer des Timeouts in Minuten' },
+    ...describeOption((t) => t.moderation.options.timeout.minutes),
     min_value: 1,
     max_value: 40320,
     required: true,
@@ -55,8 +47,7 @@ export class TimeoutDto {
 
   @StringOption({
     name: 'reason',
-    description: 'The reason for the timeout',
-    description_localizations: { de: 'Grund des Timeouts' },
+    ...describeOption((t) => t.moderation.options.timeout.reason),
     required: false,
     max_length: 512,
   })
@@ -66,16 +57,14 @@ export class TimeoutDto {
 export class KickDto {
   @UserOption({
     name: 'user',
-    description: 'The member to kick',
-    description_localizations: { de: 'Mitglied, das gekickt werden soll' },
+    ...describeOption((t) => t.moderation.options.kick.user),
     required: true,
   })
   user: User;
 
   @StringOption({
     name: 'reason',
-    description: 'The reason for the kick',
-    description_localizations: { de: 'Grund des Kicks' },
+    ...describeOption((t) => t.moderation.options.kick.reason),
     required: false,
     max_length: 512,
   })
@@ -85,18 +74,14 @@ export class KickDto {
 export class BanDto {
   @UserOption({
     name: 'user',
-    description: 'The user to ban (also works for non-members)',
-    description_localizations: {
-      de: 'Nutzer, der gebannt werden soll (auch Nicht-Mitglieder)',
-    },
+    ...describeOption((t) => t.moderation.options.ban.user),
     required: true,
   })
   user: User;
 
   @StringOption({
     name: 'reason',
-    description: 'The reason for the ban',
-    description_localizations: { de: 'Grund des Banns' },
+    ...describeOption((t) => t.moderation.options.ban.reason),
     required: false,
     max_length: 512,
   })
@@ -104,8 +89,7 @@ export class BanDto {
 
   @IntegerOption({
     name: 'delete_days',
-    description: 'Delete messages from the last X days',
-    description_localizations: { de: 'Nachrichten der letzten X Tage löschen' },
+    ...describeOption((t) => t.moderation.options.ban.deleteDays),
     min_value: 0,
     max_value: 7,
     required: false,
@@ -116,18 +100,14 @@ export class BanDto {
 export class UnbanDto {
   @UserOption({
     name: 'user',
-    description: 'The user to unban (paste the user ID)',
-    description_localizations: {
-      de: 'Nutzer, der entbannt werden soll (User-ID einfügen)',
-    },
+    ...describeOption((t) => t.moderation.options.unban.user),
     required: true,
   })
   user: User;
 
   @StringOption({
     name: 'reason',
-    description: 'The reason for the unban',
-    description_localizations: { de: 'Grund der Entbannung' },
+    ...describeOption((t) => t.moderation.options.unban.reason),
     required: false,
     max_length: 512,
   })
