@@ -178,4 +178,72 @@ export const de = {
     goodbyeEnabledCustom: '✅ Abschiedsnachrichten mit eigenem Text aktiviert.',
     goodbyeDisabled: '✅ Abschiedsnachrichten deaktiviert.',
   },
+
+  // Modlog module
+  modlog: {
+    commands: {
+      modlog: 'Mod-Log einstellen',
+      show: 'Zeige die aktuellen Mod-Log-Einstellungen',
+      channel: 'Log-Channel setzen oder entfernen',
+      toggle: 'Logging eines Ereignisses an- oder ausschalten',
+    },
+    // The choices of the "event" option use admin.events below
+    options: {
+      channel: 'Log-Channel (leer lassen zum Entfernen)',
+      event: 'Was geloggt werden soll',
+      enabled: 'Dieses Ereignis loggen',
+    },
+
+    // Moderation cases (log channel, server language)
+    caseTypes: {
+      WARN: 'Verwarnung',
+      TIMEOUT: 'Timeout',
+      KICK: 'Kick',
+      BAN: 'Bann',
+      UNBAN: 'Entbannung',
+    },
+
+    caseTitle: (params: { caseNumber: number; type: string }) =>
+      `Fall #${params.caseNumber} • ${params.type}`,
+
+    fields: {
+      user: 'Nutzer',
+      moderator: 'Moderator',
+      reason: 'Grund',
+      duration: 'Dauer',
+      accountCreated: 'Konto erstellt',
+      joinedServer: 'Server beigetreten',
+      memberCount: 'Mitglieder',
+    },
+    noReason: 'Kein Grund angegeben',
+    unknown: 'unbekannt',
+    minutes: (params: { minutes: number }) => `${params.minutes} Minute(n)`,
+
+    // Joins and leaves (log channel, server language)
+    memberJoined: '📥 Mitglied beigetreten',
+    memberLeft: '📤 Mitglied hat den Server verlassen',
+
+    // /modlog (admin, user language)
+    admin: {
+      show: {
+        channel: 'Log-Channel',
+        moderation: 'Moderationsfälle',
+        joins: 'Beitritte',
+        leaves: 'Austritte',
+        notSet: 'nicht gesetzt',
+        enabled: 'aktiviert',
+        disabled: 'deaktiviert',
+      },
+      channelSet: (params: { channel: string }) =>
+        `✅ Log-Channel auf ${params.channel} gesetzt.`,
+      channelRemoved: '✅ Log-Channel entfernt. Es wird nichts mehr geloggt.',
+      events: {
+        moderation: 'Moderationsfälle',
+        joins: 'Beitritte',
+        leaves: 'Austritte',
+      },
+      toggled: (params: { event: string; enabled: boolean }) =>
+        `✅ ${params.event} werden ${params.enabled ? 'jetzt' : 'nicht mehr'} geloggt.`,
+    },
+  },
 } satisfies Translations;

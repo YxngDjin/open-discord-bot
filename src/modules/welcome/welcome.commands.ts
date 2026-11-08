@@ -13,7 +13,6 @@ import {
 } from 'necord';
 import { resolveLocale } from '../../core/i18n/locales.js';
 import { ModuleSettingsService } from '../../core/module-registry/module-settings.service.js';
-import { welcomeModuleTranslations } from './i18n/index.js';
 import { welcomeModule } from './welcome.definition.js';
 import {
   WelcomeChannelDto,
@@ -22,13 +21,12 @@ import {
   WelcomeMessageDto,
   WelcomeRoleDto,
 } from './dto/dto.js';
+import { describeCommand } from '../../core/i18n/localize.js';
+import { translations } from '../../core/i18n/translations/index.js';
 
 export const WelcomeCommandsDecorator = createCommandGroupDecorator({
   name: 'welcome',
-  description: 'Manage the welcome module',
-  descriptionLocalizations: {
-    de: 'Verwalte das Willkommen-Modul',
-  },
+  ...describeCommand((t) => t.welcome.commands.welcome),
   defaultMemberPermissions: [PermissionFlagsBits.ManageGuild],
   contexts: [InteractionContextType.Guild],
 });
@@ -41,15 +39,12 @@ export class WelcomeCommands {
   constructor(private readonly settings: ModuleSettingsService) {}
 
   private translate(interaction: Interaction) {
-    return welcomeModuleTranslations[resolveLocale(interaction.locale)];
+    return translations[resolveLocale(interaction.locale)].welcome;
   }
 
   @Subcommand({
     name: 'show',
-    description: 'Show the current welcome settings',
-    descriptionLocalizations: {
-      de: 'Zeige die aktuellen Willkommen-Einstellungen',
-    },
+    ...describeCommand((t) => t.welcome.commands.show),
   })
   public async onShow(@Context() [interaction]: SlashCommandContext) {
     const t = this.translate(interaction);
@@ -80,10 +75,7 @@ export class WelcomeCommands {
 
   @Subcommand({
     name: 'channel',
-    description: 'Set or remove the welcome channel',
-    descriptionLocalizations: {
-      de: 'Setze oder entferne den Willkommens-Channel',
-    },
+    ...describeCommand((t) => t.welcome.commands.channel),
   })
   public async onChannel(
     @Context() [interaction]: SlashCommandContext,
@@ -104,10 +96,7 @@ export class WelcomeCommands {
 
   @Subcommand({
     name: 'message',
-    description: 'Set or reset the welcome message',
-    descriptionLocalizations: {
-      de: 'Setze die Willkommensnachricht oder setze sie zurück',
-    },
+    ...describeCommand((t) => t.welcome.commands.message),
   })
   public async onMessage(
     @Context() [interaction]: SlashCommandContext,
@@ -127,10 +116,7 @@ export class WelcomeCommands {
 
   @Subcommand({
     name: 'autorole-add',
-    description: 'Add a role that new members get automatically',
-    descriptionLocalizations: {
-      de: 'Füge eine Rolle hinzu, die neue Mitglieder automatisch bekommen',
-    },
+    ...describeCommand((t) => t.welcome.commands.autoroleAdd),
   })
   public async onAutoRoleAdd(
     @Context() [interaction]: SlashCommandContext,
@@ -170,8 +156,7 @@ export class WelcomeCommands {
 
   @Subcommand({
     name: 'autorole-remove',
-    description: 'Remove an automatic role',
-    descriptionLocalizations: { de: 'Entferne eine automatische Rolle' },
+    ...describeCommand((t) => t.welcome.commands.autoroleRemove),
   })
   public async onAutoRoleRemove(
     @Context() [interaction]: SlashCommandContext,
@@ -203,10 +188,7 @@ export class WelcomeCommands {
 
   @Subcommand({
     name: 'autorole-delay',
-    description: 'Set the delay before auto roles are given',
-    descriptionLocalizations: {
-      de: 'Setze die Verzögerung, bevor Auto-Rollen vergeben werden',
-    },
+    ...describeCommand((t) => t.welcome.commands.autoroleDelay),
   })
   public async onAutoRoleDelay(
     @Context() [interaction]: SlashCommandContext,
@@ -225,10 +207,7 @@ export class WelcomeCommands {
 
   @Subcommand({
     name: 'goodbye',
-    description: 'Enable or disable goodbye messages',
-    descriptionLocalizations: {
-      de: 'Aktiviere oder deaktiviere Abschiedsnachrichten',
-    },
+    ...describeCommand((t) => t.welcome.commands.goodbye),
   })
   public async onGoodbye(
     @Context() [interaction]: SlashCommandContext,

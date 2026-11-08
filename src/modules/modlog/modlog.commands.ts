@@ -13,9 +13,10 @@ import {
 } from 'necord';
 import { resolveLocale } from '../../core/i18n/locales.js';
 import { ModuleSettingsService } from '../../core/module-registry/module-settings.service.js';
-import { modlogTranslations } from './i18n/index.js';
 import { modlogModule } from './modlog.definition.js';
 import { ModlogChannelDto, ModlogToggleDto, toggles } from './dto/dto.js';
+import { describeCommand } from '../../core/i18n/localize.js';
+import { translations } from '../../core/i18n/translations/index.js';
 
 type Interaction = SlashCommandContext[0];
 
@@ -23,8 +24,7 @@ type Interaction = SlashCommandContext[0];
 
 export const ModlogCommandsDecorator = createCommandGroupDecorator({
   name: 'modlog',
-  description: 'Configure the mod log',
-  descriptionLocalizations: { de: 'Mod-Log einstellen' },
+  ...describeCommand((t) => t.modlog.commands.modlog),
   defaultMemberPermissions: [PermissionFlagsBits.ManageGuild],
   contexts: [InteractionContextType.Guild],
 });
@@ -35,15 +35,12 @@ export class ModlogCommands {
   constructor(private readonly settings: ModuleSettingsService) {}
 
   private translate(interaction: Interaction) {
-    return modlogTranslations[resolveLocale(interaction.locale)].admin;
+    return translations[resolveLocale(interaction.locale)].modlog.admin;
   }
 
   @Subcommand({
     name: 'show',
-    description: 'Show the current mod log settings',
-    descriptionLocalizations: {
-      de: 'Zeige die aktuellen Mod-Log-Einstellungen',
-    },
+    ...describeCommand((t) => t.modlog.commands.show),
   })
   public async onShow(@Context() [interaction]: SlashCommandContext) {
     const t = this.translate(interaction).show;
@@ -68,8 +65,7 @@ export class ModlogCommands {
 
   @Subcommand({
     name: 'channel',
-    description: 'Set or remove the log channel',
-    descriptionLocalizations: { de: 'Log-Channel setzen oder entfernen' },
+    ...describeCommand((t) => t.modlog.commands.channel),
   })
   public async onChannel(
     @Context() [interaction]: SlashCommandContext,
@@ -90,10 +86,7 @@ export class ModlogCommands {
 
   @Subcommand({
     name: 'toggle',
-    description: 'Turn logging of an event on or off',
-    descriptionLocalizations: {
-      de: 'Logging eines Ereignisses an- oder ausschalten',
-    },
+    ...describeCommand((t) => t.modlog.commands.toggle),
   })
   public async onToggle(
     @Context() [interaction]: SlashCommandContext,

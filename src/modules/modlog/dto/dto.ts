@@ -1,5 +1,6 @@
 import { ChannelType, type GuildBasedChannel } from 'discord.js';
 import { BooleanOption, ChannelOption, StringOption } from 'necord';
+import { describeName, describeOption } from '../../../core/i18n/localize.js';
 
 export const toggles = {
   moderation: 'logModeration',
@@ -12,10 +13,7 @@ export type ToggleEvent = keyof typeof toggles;
 export class ModlogChannelDto {
   @ChannelOption({
     name: 'channel',
-    description: 'Log channel (leave empty to remove)',
-    description_localizations: {
-      de: 'Log-Channel (leer lassen zum Entfernen)',
-    },
+    ...describeOption((t) => t.modlog.options.channel),
     required: false,
     channel_types: [ChannelType.GuildText, ChannelType.GuildAnnouncement],
   })
@@ -25,23 +23,19 @@ export class ModlogChannelDto {
 export class ModlogToggleDto {
   @StringOption({
     name: 'event',
-    description: 'What should be logged',
-    description_localizations: { de: 'Was geloggt werden soll' },
+    ...describeOption((t) => t.modlog.options.event),
     required: true,
     choices: [
       {
-        name: 'Moderation cases',
-        name_localizations: { de: 'Moderationsfälle' },
+        ...describeName((t) => t.modlog.admin.events.moderation),
         value: 'moderation',
       },
       {
-        name: 'Joins',
-        name_localizations: { de: 'Beitritte' },
+        ...describeName((t) => t.modlog.admin.events.joins),
         value: 'joins',
       },
       {
-        name: 'Leaves',
-        name_localizations: { de: 'Austritte' },
+        ...describeName((t) => t.modlog.admin.events.leaves),
         value: 'leaves',
       },
     ],
@@ -50,8 +44,7 @@ export class ModlogToggleDto {
 
   @BooleanOption({
     name: 'enabled',
-    description: 'Log this event',
-    description_localizations: { de: 'Dieses Ereignis loggen' },
+    ...describeOption((t) => t.modlog.options.enabled),
     required: true,
   })
   enabled: boolean;
