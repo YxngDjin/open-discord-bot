@@ -10,7 +10,6 @@ import { resolveLocale } from '../../core/i18n/locales.js';
 import { ModuleSettingsService } from '../../core/module-registry/module-settings.service.js';
 import { xpTranslations } from './i18n/index.js';
 import { xpModule } from './xp.definition.js';
-import { levelFromXp } from './xp.formula.js';
 import { XpService } from './xp.service.js';
 import { RankDto } from './dto/dto.js';
 import { renderLeaderboard } from './leaderboard.render.js';
@@ -104,14 +103,6 @@ export class XpCommands {
       });
     }
 
-    const lines = entries.map((entry, index) =>
-      t.leaderboardLine({
-        position: index + 1,
-        user: `<@${entry.userId}>`,
-        level: levelFromXp(entry.xp),
-        xp: entry.xp.toLocaleString(locale),
-      }),
-    );
 
     return interaction.reply({
       content: renderLeaderboard(entries, locale),

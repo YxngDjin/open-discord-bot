@@ -18,7 +18,8 @@ import { I18nService } from '../../core/i18n/i18n.service.js';
 import { resolveLocale } from '../../core/i18n/locales.js';
 import { ModuleRegistryService } from '../../core/module-registry/module-registry.service.js';
 import { ModuleSettingsService } from '../../core/module-registry/module-settings.service.js';
-import { utilityTranslations } from './i18n/index.js';
+import { translations } from '../../core/i18n/translations/index.js';
+import { describeCommand } from '../../core/i18n/localize.js';
 import { ClearDto, UserInfoDto } from './dto/dto.js';
 
 /** Discord timestamp with date and relative time, e.g. "14 November 2023 (3 years ago)". */
@@ -39,8 +40,7 @@ export class UtilityCommands {
 
   @SlashCommand({
     name: 'ping',
-    description: "Show the bot's latency",
-    descriptionLocalizations: { de: 'Zeige die Latenz des Bots' },
+    ...describeCommand((t) => t.utility.commands.ping),
   })
   public async onPing(@Context() [interaction]: SlashCommandContext) {
     return interaction.reply(`🏓 Pong! ${interaction.client.ws.ping} ms`);
@@ -48,10 +48,7 @@ export class UtilityCommands {
 
   @SlashCommand({
     name: 'serverinfo',
-    description: 'Show information about this server',
-    descriptionLocalizations: {
-      de: 'Informationen über diesen Server anzeigen',
-    },
+    ...describeCommand((t) => t.utility.commands.serverinfo),
     contexts: [InteractionContextType.Guild],
   })
   public async onServerInfo(@Context() [interaction]: SlashCommandContext) {
@@ -60,7 +57,7 @@ export class UtilityCommands {
 
     // Public answer → server language
     const locale = await this.i18n.getGuildLocale(guild.id);
-    const t = utilityTranslations[locale].serverinfo;
+    const t = translations[locale].utility.serverinfo;
 
     const embed = new EmbedBuilder()
       .setTitle(guild.name)
@@ -93,10 +90,7 @@ export class UtilityCommands {
 
   @SlashCommand({
     name: 'userinfo',
-    description: 'Show information about a member',
-    descriptionLocalizations: {
-      de: 'Informationen über ein Mitglied anzeigen',
-    },
+    ...describeCommand((t) => t.utility.commands.userinfo),
     contexts: [InteractionContextType.Guild],
   })
   public async onUserInfo(
@@ -111,7 +105,8 @@ export class UtilityCommands {
 
     if (!member) {
       // Only the asking person sees this → their language
-      const t = utilityTranslations[resolveLocale(interaction.locale)].userinfo;
+      const t =
+        translations[resolveLocale(interaction.locale)].utility.userinfo;
       return interaction.reply({
         content: t.notMember,
         flags: MessageFlags.Ephemeral,
@@ -120,7 +115,7 @@ export class UtilityCommands {
 
     // Public answer → server language
     const locale = await this.i18n.getGuildLocale(interaction.guild.id);
-    const t = utilityTranslations[locale].userinfo;
+    const t = translations[locale].utility.userinfo;
 
     // All roles except @everyone, highest first
     const roles = member.roles.cache
@@ -153,10 +148,7 @@ export class UtilityCommands {
 
   @SlashCommand({
     name: 'clear',
-    description: 'Delete the last messages in this channel',
-    descriptionLocalizations: {
-      de: 'Die letzten Nachrichten in diesem Channel löschen',
-    },
+    ...describeCommand((t) => t.utility.commands.clear),
     contexts: [InteractionContextType.Guild],
     defaultMemberPermissions: [PermissionFlagsBits.ManageMessages],
   })
@@ -165,7 +157,7 @@ export class UtilityCommands {
     @Options() { amount }: ClearDto,
   ) {
     if (!interaction.inCachedGuild()) return;
-    const t = utilityTranslations[resolveLocale(interaction.locale)].clear;
+    const t = translations[resolveLocale(interaction.locale)].utility.clear;
 
     const channel = interaction.channel;
     if (!channel?.isTextBased()) {
@@ -196,14 +188,13 @@ export class UtilityCommands {
 
   @SlashCommand({
     name: 'help',
-    description: 'Show all commands',
-    descriptionLocalizations: { de: 'Alle Befehle anzeigen' },
+    ...describeCommand((t) => t.utility.commands.help),
     contexts: [InteractionContextType.Guild],
   })
   public async onHelp(@Context() [interaction]: SlashCommandContext) {
     if (!interaction.inCachedGuild()) return;
     const locale = resolveLocale(interaction.locale);
-    const t = utilityTranslations[locale].help;
+    const t = translations[locale].utility.help;
 
     // In development, commands live on the test server, otherwise globally.
     // Fetch both at the same time.
