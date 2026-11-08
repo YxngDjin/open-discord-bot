@@ -32,8 +32,7 @@ export class WelcomeService {
     );
 
     if (settings.channelId) {
-      const t =
-        translations[await this.i18n.getGuildLocale(guildId)].welcome;
+      const t = translations[await this.i18n.getGuildLocale(guildId)].welcome;
       const text = renderTemplate(
         settings.message ?? t.defaultWelcome,
         this.getValues(member),
@@ -59,8 +58,7 @@ export class WelcomeService {
     );
     if (!settings.goodbyeEnabled || !settings.channelId) return;
 
-    const t =
-      translations[await this.i18n.getGuildLocale(guildId)].welcome;
+    const t = translations[await this.i18n.getGuildLocale(guildId)].welcome;
     const text = renderTemplate(
       settings.goodbyeMessage ?? t.defaultGoodbye,
       this.getValues(member),

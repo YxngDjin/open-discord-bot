@@ -11,7 +11,10 @@ import { I18nService } from '../../core/i18n/i18n.service.js';
 import { ModuleSettingsService } from '../../core/module-registry/module-settings.service.js';
 import type { ModerationCaseCreatedEvent } from '../moderation/moderation.events.js';
 import { modlogModule, type ModlogSettings } from './modlog.definition.js';
-import { Translations, translations } from '../../core/i18n/translations/index.js';
+import {
+  type Translations,
+  translations,
+} from '../../core/i18n/translations/index.js';
 
 const caseColors = {
   WARN: 0xfee75c, // yellow
@@ -144,7 +147,10 @@ export class ModlogService {
   private async getLogTarget(
     guildId: string,
     toggle: LogToggle,
-  ): Promise<{ channel: GuildTextBasedChannel; t: Translations['modlog'] } | null> {
+  ): Promise<{
+    channel: GuildTextBasedChannel;
+    t: Translations['modlog'];
+  } | null> {
     if (!(await this.moduleSettings.isEnabled(guildId, modlogModule.key)))
       return null;
 
