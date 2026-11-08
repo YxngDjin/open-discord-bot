@@ -17,6 +17,7 @@ services:
       retries: 10
 
   app:
+    image: ghcr.io/yxngdjin/open-discord-bot:${BOT_TAG:-latest}
     build: .
     restart: unless-stopped
     env_file:
