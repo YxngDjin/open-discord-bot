@@ -7,15 +7,12 @@ import {
   InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
-  type User,
 } from 'discord.js';
 import {
   Context,
-  IntegerOption,
   Options,
   SlashCommand,
   type SlashCommandContext,
-  UserOption,
 } from 'necord';
 import { I18nService } from '../../core/i18n/i18n.service.js';
 import { resolveLocale } from '../../core/i18n/locales.js';

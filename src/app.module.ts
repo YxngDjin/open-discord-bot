@@ -15,6 +15,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ModlogModule } from './modules/modlog/modlog.module.js';
 import { SelfRolesModule } from './modules/self-roles/self-roles.module.js';
 import { TempVoiceModule } from './modules/temp-voice/temp-voice.module.js';
+import { APP_FILTER } from '@nestjs/core';
+import { DiscordExceptionFilter } from './core/filters/discord-exception.filter.js';
 
 @Module({
   imports: [
@@ -36,6 +38,12 @@ import { TempVoiceModule } from './modules/temp-voice/temp-voice.module.js';
     ModlogModule,
     SelfRolesModule,
     TempVoiceModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: DiscordExceptionFilter,
+    },
   ],
 })
 export class AppModule {}

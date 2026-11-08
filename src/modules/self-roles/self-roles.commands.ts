@@ -1,27 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import {
-  ChannelType,
   Colors,
   EmbedBuilder,
-  type GuildBasedChannel,
   InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
-  type Role,
 } from 'discord.js';
 import {
-  ChannelOption,
   Context,
   createCommandGroupDecorator,
-  IntegerOption,
   Options,
-  RoleOption,
   type SlashCommandContext,
-  StringOption,
   Subcommand,
 } from 'necord';
 import { resolveLocale } from '../../core/i18n/locales.js';
-import type { SelfRoleMode } from '../../generated/prisma/enums.js';
 import { selfRolesTranslations } from './i18n/index.js';
 import { MAX_OPTIONS, SelfRolesService } from './self-roles.service.js';
 import { AddRoleDto, CreateDto, PanelDto, RemoveRoleDto } from './dto/dto.js';

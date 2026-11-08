@@ -3,17 +3,13 @@ import {
   InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
-  type User,
 } from 'discord.js';
 import {
   Context,
   createCommandGroupDecorator,
-  IntegerOption,
   Options,
   type SlashCommandContext,
-  StringOption,
   Subcommand,
-  UserOption,
 } from 'necord';
 import { resolveLocale } from '../../core/i18n/locales.js';
 import { moderationTranslations } from './i18n/index.js';

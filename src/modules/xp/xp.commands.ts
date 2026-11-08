@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { InteractionContextType, MessageFlags, type User } from 'discord.js';
+import { InteractionContextType, MessageFlags } from 'discord.js';
 import {
   Context,
   Options,
   SlashCommand,
   type SlashCommandContext,
-  UserOption,
 } from 'necord';
 import { resolveLocale } from '../../core/i18n/locales.js';
 import { ModuleSettingsService } from '../../core/module-registry/module-settings.service.js';
