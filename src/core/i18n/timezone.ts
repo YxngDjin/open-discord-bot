@@ -1,3 +1,5 @@
+export const DEFAULT_TIMEZONE = 'UTC';
+
 export const isValidTimezone = (timezone: string): boolean => {
   try {
     Intl.DateTimeFormat('en', { timeZone: timezone });
@@ -7,7 +9,10 @@ export const isValidTimezone = (timezone: string): boolean => {
   }
 };
 
-export const TIMEZONES = ['UTC', ...Intl.supportedValuesOf('timeZone')];
+export const TIMEZONES = [
+  DEFAULT_TIMEZONE,
+  ...Intl.supportedValuesOf('timeZone'),
+];
 
 export const localDateTime = (date: Date, timezone: string) => {
   const formatter = new Intl.DateTimeFormat('en-US', {

@@ -61,7 +61,7 @@ export class LeaderboardService {
         state?.lastPostedOn ?? null,
       )
     ) {
-      return;
+      return await this.post(guildId, settings.leaderboardChannelId, state, local.date)
     }
   }
 

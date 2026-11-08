@@ -5,6 +5,7 @@ import {
   resolveLocale,
   type SupportedLocale,
 } from './locales.js';
+import { DEFAULT_TIMEZONE } from './timezone.js';
 
 @Injectable()
 export class I18nService {
@@ -14,7 +15,7 @@ export class I18nService {
     const guild = await this.prisma.guild.findUnique({
       where: { id: guildId },
     });
-    return guild?.timezone ?? 'UTC';
+    return guild?.timezone ?? DEFAULT_TIMEZONE;
   }
 
   async setGuildTimezone(guildId: string, timezone: string) {
