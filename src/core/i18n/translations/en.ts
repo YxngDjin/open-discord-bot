@@ -1,4 +1,5 @@
 import type { CaseType } from '../../../generated/prisma/enums.js';
+import type { OwnedChannelError } from '../../../modules/temp-voice/temp-voice.service.js';
 
 export const en = {
   // /language (admin, user language)
@@ -241,6 +242,96 @@ export const en = {
       },
       toggled: (params: { event: string; enabled: boolean }) =>
         `✅ ${params.event} will ${params.enabled ? 'now' : 'no longer'} be logged.`,
+    },
+  },
+
+  // Temp voice module
+  tempVoice: {
+    commands: {
+      // /tempvoice
+      tempvoice: {
+        group: 'Configure temporary voice channels',
+        show: 'Show the current settings',
+        channel: 'Set or remove the join-to-create channel',
+        category: 'Set or remove the category for new channels',
+        name: 'Set the name of new channels',
+        limit: 'Set the user limit of new channels',
+        deleteAfter: 'Set how long an empty channel is kept',
+      },
+      // /voice
+      voice: {
+        group: 'Manage your temporary voice channel',
+        name: 'Rename your channel',
+        limit: 'Set the user limit of your channel',
+        lock: 'Lock your channel so nobody else can join',
+        unlock: 'Open your channel again',
+      },
+    },
+    // /tempvoice limit and /voice limit share "users"
+    options: {
+      channel: 'Voice channel to join to create a channel (empty = off)',
+      category: 'Category for new channels (empty = same as join channel)',
+      template: 'Name of new channels, {user} = member name',
+      users: 'Maximum number of users (0 = no limit)',
+      minutes: 'Minutes an empty channel is kept (0 = delete right away)',
+      name: 'New name of your channel',
+    },
+
+    // /tempvoice (admin, user language)
+    admin: {
+      show: {
+        title: 'Temporary voice channels',
+        creatorChannel: 'Join to create',
+        category: 'Category',
+        sameAsCreator: 'same as the join channel',
+        nameTemplate: 'Channel name',
+        userLimit: 'User limit',
+        noLimit: 'no limit',
+        deleteAfter: 'Delete when empty after',
+        minutes: (params: { minutes: number }) =>
+          params.minutes === 0 ? 'right away' : `${params.minutes} min`,
+        notSet: 'not set',
+      },
+      channelSet: (params: { channel: string }) =>
+        `✅ Members who join ${params.channel} now get their own voice channel.`,
+      channelRemoved:
+        '✅ Join channel removed. No new temporary channels will be created.',
+      missingPermissions:
+        '⚠️ I am missing the **Manage Channels** or **Move Members** permission. Without them I cannot create channels or move members.',
+      categorySet: (params: { category: string }) =>
+        `✅ New channels will be created in ${params.category}.`,
+      categoryRemoved:
+        '✅ New channels will be created in the same category as the join channel.',
+      nameSet: (params: { example: string }) =>
+        `✅ Channel name updated. Example: **${params.example}**`,
+      limitSet: (params: { limit: number }) =>
+        params.limit === 0
+          ? '✅ New channels have no user limit.'
+          : `✅ New channels are limited to ${params.limit} users.`,
+      deleteAfterSet: (params: { minutes: number }) =>
+        params.minutes === 0
+          ? '✅ Empty channels are deleted right away (within a minute).'
+          : `✅ Empty channels are deleted after ${params.minutes} minute(s).`,
+    },
+
+    // /voice (channel owner, user language)
+    owner: {
+      // Why /voice can't be used, one text per result of getOwnedChannel
+      errors: {
+        not_in_voice: '❌ Join your temporary voice channel first.',
+        not_temp: '❌ This is not a temporary voice channel.',
+        not_owner: '❌ Only the owner of this channel can change it.',
+      } satisfies Record<OwnedChannelError, string>,
+      renamed: (params: { name: string }) =>
+        `✅ Channel renamed to **${params.name}**.`,
+      limitSet: (params: { limit: number }) =>
+        params.limit === 0
+          ? '✅ Your channel has no user limit now.'
+          : `✅ Your channel is limited to ${params.limit} users now.`,
+      locked: '🔒 Your channel is locked. Nobody else can join.',
+      unlocked: '🔓 Your channel is open again.',
+      failed:
+        "❌ I couldn't change your channel. I might be missing the Manage Channels permission.",
     },
   },
 };

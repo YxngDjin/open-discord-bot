@@ -12,9 +12,10 @@ import {
   Subcommand,
 } from 'necord';
 import { resolveLocale } from '../../core/i18n/locales.js';
-import { tempVoiceTranslations } from './i18n/index.js';
 import { TempVoiceService } from './temp-voice.service.js';
 import { VoiceLimitDto, VoiceNameDto } from './dto/dto.js';
+import { describeCommand } from '../../core/i18n/localize.js';
+import { translations } from '../../core/i18n/translations/index.js';
 
 type Interaction = SlashCommandContext[0];
 
@@ -22,8 +23,7 @@ type Interaction = SlashCommandContext[0];
 // channel they own. getOwnedChannel checks that.
 export const VoiceCommandsDecorator = createCommandGroupDecorator({
   name: 'voice',
-  description: 'Manage your temporary voice channel',
-  descriptionLocalizations: { de: 'Deinen temporären Voice-Channel verwalten' },
+  ...describeCommand((t) => t.tempVoice.commands.voice.group),
   contexts: [InteractionContextType.Guild],
 });
 
@@ -48,7 +48,7 @@ export class TempVoiceOwnerCommands {
   ) {
     if (!interaction.inCachedGuild()) return;
 
-    const t = tempVoiceTranslations[resolveLocale(interaction.locale)].owner;
+    const t = translations[resolveLocale(interaction.locale)].tempVoice.owner;
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const result = await this.tempVoiceService.getOwnedChannel(
@@ -72,13 +72,12 @@ export class TempVoiceOwnerCommands {
   }
 
   private translate(interaction: Interaction) {
-    return tempVoiceTranslations[resolveLocale(interaction.locale)].owner;
+    return translations[resolveLocale(interaction.locale)].tempVoice.owner;
   }
 
   @Subcommand({
     name: 'name',
-    description: 'Rename your channel',
-    descriptionLocalizations: { de: 'Deinen Channel umbenennen' },
+    ...describeCommand((t) => t.tempVoice.commands.voice.name),
   })
   public async onName(
     @Context() [interaction]: SlashCommandContext,
@@ -93,8 +92,7 @@ export class TempVoiceOwnerCommands {
 
   @Subcommand({
     name: 'limit',
-    description: 'Set the user limit of your channel',
-    descriptionLocalizations: { de: 'Nutzerlimit deines Channels festlegen' },
+    ...describeCommand((t) => t.tempVoice.commands.voice.limit),
   })
   public async onLimit(
     @Context() [interaction]: SlashCommandContext,
@@ -109,10 +107,7 @@ export class TempVoiceOwnerCommands {
 
   @Subcommand({
     name: 'lock',
-    description: 'Lock your channel so nobody else can join',
-    descriptionLocalizations: {
-      de: 'Channel abschließen, damit niemand sonst beitreten kann',
-    },
+    ...describeCommand((t) => t.tempVoice.commands.voice.lock),
   })
   public async onLock(@Context() [interaction]: SlashCommandContext) {
     const t = this.translate(interaction);
@@ -131,8 +126,7 @@ export class TempVoiceOwnerCommands {
 
   @Subcommand({
     name: 'unlock',
-    description: 'Open your channel again',
-    descriptionLocalizations: { de: 'Deinen Channel wieder öffnen' },
+    ...describeCommand((t) => t.tempVoice.commands.voice.unlock),
   })
   public async onUnlock(@Context() [interaction]: SlashCommandContext) {
     const t = this.translate(interaction);
