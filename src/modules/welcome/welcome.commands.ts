@@ -1,22 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import {
-  ChannelType,
-  type GuildBasedChannel,
   InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
-  type Role,
 } from 'discord.js';
 import {
-  BooleanOption,
-  ChannelOption,
   Context,
   createCommandGroupDecorator,
-  IntegerOption,
   Options,
-  RoleOption,
   type SlashCommandContext,
-  StringOption,
   Subcommand,
 } from 'necord';
 import { resolveLocale } from '../../core/i18n/locales.js';

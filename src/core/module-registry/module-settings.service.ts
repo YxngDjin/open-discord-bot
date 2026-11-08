@@ -4,6 +4,7 @@ import { ModuleRegistryService } from './module-registry.service.js';
 import type * as z from 'zod';
 import type { ModuleDefinition } from './module-definition.js';
 import type { Prisma } from '../../generated/prisma/client.js';
+import { nullToUndefined } from './null-to-undefined.js';
 
 @Injectable()
 export class ModuleSettingsService {
@@ -79,7 +80,7 @@ export class ModuleSettingsService {
     patch: Partial<z.infer<TSchema>>,
   ): Promise<z.infer<TSchema>> {
     const currentSettings = await this.getSettings(guildId, definition);
-    const newSettings = { ...currentSettings, ...patch };
+    const newSettings = { ...currentSettings, ...nullToUndefined(patch) };
 
     const result = definition.settingsSchema.safeParse(newSettings);
 
