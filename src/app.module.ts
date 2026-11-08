@@ -17,6 +17,7 @@ import { SelfRolesModule } from './modules/self-roles/self-roles.module.js';
 import { TempVoiceModule } from './modules/temp-voice/temp-voice.module.js';
 import { APP_FILTER } from '@nestjs/core';
 import { DiscordExceptionFilter } from './core/filters/discord-exception.filter.js';
+import { ApiModule } from './core/api/api.module.js';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { DiscordExceptionFilter } from './core/filters/discord-exception.filter.
     ModlogModule,
     SelfRolesModule,
     TempVoiceModule,
+    ApiModule,
   ],
   providers: [
     {
