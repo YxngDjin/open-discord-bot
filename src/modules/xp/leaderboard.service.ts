@@ -63,7 +63,7 @@ export class LeaderboardService {
     ) {
       return;
     }
-    await this.post(guildId, settings.leaderboardChannelId, state, local.date)
+    await this.post(guildId, settings.leaderboardChannelId, state, local.date);
   }
 
   private async post(

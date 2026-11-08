@@ -8,12 +8,19 @@ import { BaseInteraction, MessageFlags } from 'discord.js';
 import { NecordArgumentsHost } from 'necord';
 import { resolveLocale } from '../i18n/locales.js';
 import { translations } from '../i18n/translations/index.js';
+import { BaseExceptionFilter } from '@nestjs/core';
 
 @Catch()
-export class DiscordExceptionFilter implements ExceptionFilter {
+export class DiscordExceptionFilter
+  extends BaseExceptionFilter
+  implements ExceptionFilter
+{
   private readonly logger = new Logger(DiscordExceptionFilter.name);
 
   catch(exception: unknown, host: ArgumentsHost) {
+    if (host.getType() === 'http') {
+      return super.catch(exception, host);
+    }
     const message =
       exception instanceof Error ? exception.stack : String(exception);
     this.logger.error(message);

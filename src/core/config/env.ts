@@ -7,6 +7,8 @@ const envSchema = z.object({
     .enum(['fatal', 'error', 'warn', 'log', 'debug', 'verbose'])
     .default('log'),
   DATABASE_URL: z.string().min(10),
+  DASHBOARD_ENABLED: z.stringbool().default(false),
+  PORT: z.coerce.number().int().min(1).max(65535).default(3000),
 });
 
 export type Env = z.infer<typeof envSchema>;
