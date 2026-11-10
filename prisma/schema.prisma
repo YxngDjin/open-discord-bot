@@ -151,3 +151,13 @@ model LeaderboardMessage {
 
   @@map("leaderboard_messages")
 }
+
+model Session {
+  tokenHash String   @id @map("token_hash")
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("sessions")
+}
