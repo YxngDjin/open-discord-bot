@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import type { SupportedLocale } from '../../i18n/locales.js';
 import { ModuleRegistryService } from '../../module-registry/module-registry.service.js';
 import { ModuleSettingsService } from '../../module-registry/module-settings.service.js';
@@ -63,7 +67,11 @@ export class GuildModulesService {
     return this.get(guildId, key);
   }
 
-  async replaceSettings(guildId: string, key: string, body: unknown): Promise<ModuleDetail> {
+  async replaceSettings(
+    guildId: string,
+    key: string,
+    body: unknown,
+  ): Promise<ModuleDetail> {
     const definition = this.getDefinition(key);
     const parse = definition.settingsSchema.safeParse(body);
     if (!parse.success) {
