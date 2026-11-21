@@ -23,12 +23,12 @@ export class GuildsService {
 
     return manageable;
   }
-    toSummary(guild: Guild): GuildSummary {
-        return { id: guild.id, name: guild.name, iconUrl: guild.iconURL() };
-    }
+  toSummary(guild: Guild): GuildSummary {
+    return { id: guild.id, name: guild.name, iconUrl: guild.iconURL() };
+  }
 
   getSummary(guildId: string): GuildSummary {
-        const guild = this.client.guilds.cache.get(guildId)!;
-        return this.toSummary(guild);
-    }
+    const guild = this.client.guilds.cache.get(guildId)!;
+    return this.toSummary(guild);
+  }
 }
