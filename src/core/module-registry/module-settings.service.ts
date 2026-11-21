@@ -74,6 +74,7 @@ export class ModuleSettingsService {
     return definition.settingsSchema.parse({});
   }
 
+  /** For slash commands: changes only the given fields, keeps the rest. */
   async updateSettings<TSchema extends z.ZodObject>(
     guildId: string,
     definition: ModuleDefinition<TSchema>,
@@ -81,17 +82,34 @@ export class ModuleSettingsService {
   ): Promise<z.infer<TSchema>> {
     const currentSettings = await this.getSettings(guildId, definition);
     const newSettings = { ...currentSettings, ...nullToUndefined(patch) };
+    return this.save(guildId, definition, newSettings);
+  }
 
-    const result = definition.settingsSchema.safeParse(newSettings);
+  /** For the dashboard: replaces all settings, so removed fields are really removed. */
+  async replaceSettings<TSchema extends z.ZodObject>(
+    guildId: string,
+    definition: ModuleDefinition<TSchema>,
+    settings: unknown,
+  ): Promise<z.infer<TSchema>> {
+    return this.save(guildId, definition, settings);
+  }
 
-    const details = result?.error?.issues
-      .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
-      .join('\n');
+  /** Validates the settings with the module's schema and stores them. */
+  private async save<TSchema extends z.ZodObject>(
+    guildId: string,
+    definition: ModuleDefinition<TSchema>,
+    settings: unknown,
+  ): Promise<z.infer<TSchema>> {
+    const result = definition.settingsSchema.safeParse(settings);
 
     if (!result.success) {
+      const details = result.error.issues
+        .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
+        .join('\n');
       throw new Error(details);
     }
 
+    // Safe after the Zod check: settings schemas only contain JSON types
     const settingsJson = result.data as Prisma.InputJsonObject;
 
     await this.prisma.guildModule.upsert({

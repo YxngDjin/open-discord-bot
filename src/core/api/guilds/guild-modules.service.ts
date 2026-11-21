@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { SupportedLocale } from '../../i18n/locales.js';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import type { SupportedLocale } from '../../i18n/locales.js';
 import { ModuleRegistryService } from '../../module-registry/module-registry.service.js';
 import { ModuleSettingsService } from '../../module-registry/module-settings.service.js';
 import * as z from 'zod';
@@ -10,7 +10,7 @@ export type ModuleSummary = {
   enabled: boolean;
 };
 
-export type moduleDetail = ModuleSummary & {
+export type ModuleDetail = ModuleSummary & {
   settings: Record<string, unknown>;
   schema: unknown;
 };
@@ -22,6 +22,15 @@ export class GuildModulesService {
     private readonly settings: ModuleSettingsService,
   ) {}
 
+  /** The module's definition, or a 404 if there is no module with this key. */
+  private getDefinition(key: string) {
+    const definition = this.registry.get(key);
+    if (!definition) {
+      throw new NotFoundException(`Module "${key}" does not exist`);
+    }
+    return definition;
+  }
+
   async list(guildId: string): Promise<ModuleSummary[]> {
     return Promise.all(
       this.registry.getAll().map(async (definition) => ({
@@ -32,11 +41,8 @@ export class GuildModulesService {
     );
   }
 
-  async get(guildId: string, key: string) {
-    const definition = this.registry.get(key);
-    if (!definition) {
-      throw new NotFoundException(`Module "${key}" does not exist`);
-    }
+  async get(guildId: string, key: string): Promise<ModuleDetail> {
+    const definition = this.getDefinition(key);
 
     return {
       key: definition.key,
@@ -51,12 +57,19 @@ export class GuildModulesService {
     guildId: string,
     key: string,
     enabled: boolean,
-  ): Promise<moduleDetail> {
-    const isExisting = this.registry.get(key);
-    if (!isExisting) {
-      throw new NotFoundException(`Module "${key}" does not exist`);
-    }
+  ): Promise<ModuleDetail> {
+    this.getDefinition(key);
     await this.settings.setEnabled(guildId, key, enabled);
-    return await this.get(guildId, key);
+    return this.get(guildId, key);
+  }
+
+  async replaceSettings(guildId: string, key: string, body: unknown): Promise<ModuleDetail> {
+    const definition = this.getDefinition(key);
+    const parse = definition.settingsSchema.safeParse(body);
+    if (!parse.success) {
+      throw new BadRequestException(parse.error.issues);
+    }
+    await this.settings.replaceSettings(guildId, definition, parse.data);
+    return this.get(guildId, key);
   }
 }
